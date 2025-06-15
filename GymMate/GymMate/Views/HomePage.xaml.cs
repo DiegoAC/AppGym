@@ -40,5 +40,10 @@
         {
             await Shell.Current.GoToAsync("progress");
         }
+
+        private async void OnSettingsClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("settings");
+        }
     }
 }

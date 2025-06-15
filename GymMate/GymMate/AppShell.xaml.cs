@@ -12,6 +12,7 @@
             Routing.RegisterRoute("sessionEditor", typeof(Views.SessionEditorPage));
             Routing.RegisterRoute("sessionDetail", typeof(Views.SessionDetailPage));
             Routing.RegisterRoute("progress", typeof(Views.ProgressPage));
+            Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
         }
     }
 }

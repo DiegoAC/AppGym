@@ -66,6 +66,7 @@
                 <PackageReference Include="Plugin.Firebase.Auth" Version="3.1.1" />
                 <PackageReference Include="Plugin.Firebase.Database" Version="3.1.1" />
                 <PackageReference Include="Plugin.LocalNotification" Version="17.0.0" />
+                <PackageReference Include="Plugin.Firebase.CloudMessaging" Version="3.1.1" />
                 <PackageReference Include="Microcharts.Maui" Version="0.9.5" />
         </ItemGroup>
 

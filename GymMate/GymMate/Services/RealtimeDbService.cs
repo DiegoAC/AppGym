@@ -9,6 +9,7 @@ public interface IRealtimeDbService
     Task<IEnumerable<Models.WorkoutSession>> GetSessionsAsync(string userId);
     Task AddSessionAsync(string userId, Models.WorkoutSession session);
     Task DeleteSessionAsync(string userId, string sessionId);
+    Task SaveDeviceTokenAsync(string userId, string token);
     event EventHandler? RoutinesChanged;
     event EventHandler? SessionsChanged;
 }
@@ -17,6 +18,7 @@ public class RealtimeDbService : IRealtimeDbService
 {
     private static readonly Dictionary<string, Dictionary<string, Models.WorkoutRoutine>> _routines = new();
     private static readonly Dictionary<string, Dictionary<string, Models.WorkoutSession>> _sessions = new();
+    private static readonly Dictionary<string, HashSet<string>> _tokens = new();
 
     public event EventHandler? RoutinesChanged;
     public event EventHandler? SessionsChanged;
@@ -92,6 +94,18 @@ public class RealtimeDbService : IRealtimeDbService
         }
 
         SessionsChanged?.Invoke(this, EventArgs.Empty);
+        return Task.CompletedTask;
+    }
+
+    public Task SaveDeviceTokenAsync(string userId, string token)
+    {
+        if (!_tokens.TryGetValue(userId, out var set))
+        {
+            set = new();
+            _tokens[userId] = set;
+        }
+
+        set.Add(token);
         return Task.CompletedTask;
     }
 }
