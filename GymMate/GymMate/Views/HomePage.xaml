@@ -53,6 +53,10 @@
                 Text="Progreso"
                 Clicked="OnProgressClicked"
                 HorizontalOptions="Fill" />
+            <Button
+                Text="Fotos"
+                Clicked="OnPhotosClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

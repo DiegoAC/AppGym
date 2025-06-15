@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:models="clr-namespace:GymMate.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=Maui.FFImageLoading"
+             x:Class="GymMate.Views.PhotosPage"
+             x:DataType="vm:PhotosViewModel"
+             x:Name="page">
+    <Grid>
+        <CollectionView ItemsSource="{Binding Photos}" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="3" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ProgressPhoto">
+                    <Border StrokeThickness="1" Margin="2">
+                        <ff:CachedImage Source="{Binding Url}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100">
+                            <ff:CachedImage.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.ViewCommand}" CommandParameter="{Binding .}" />
+                            </ff:CachedImage.GestureRecognizers>
+                        </ff:CachedImage>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" />
+        <Button Text="+" Command="{Binding AddCommand}" FontSize="24" HeightRequest="56" WidthRequest="56" CornerRadius="28" HorizontalOptions="End" VerticalOptions="End" Margin="20" />
+    </Grid>
+</ContentPage>
