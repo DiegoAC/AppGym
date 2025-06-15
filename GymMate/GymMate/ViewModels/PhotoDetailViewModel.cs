@@ -8,13 +8,15 @@ namespace GymMate.ViewModels;
 public partial class PhotoDetailViewModel : ObservableObject, IQueryAttributable
 {
     private readonly IProgressPhotoService _service;
+    private readonly IFeedService _feed;
 
     [ObservableProperty]
     private ProgressPhoto photo = new();
 
-    public PhotoDetailViewModel(IProgressPhotoService service)
+    public PhotoDetailViewModel(IProgressPhotoService service, IFeedService feed)
     {
         _service = service;
+        _feed = feed;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -31,5 +33,12 @@ public partial class PhotoDetailViewModel : ObservableObject, IQueryAttributable
 
         await _service.DeleteAsync(Photo.Id);
         await Shell.Current.GoToAsync("..");
+    }
+
+    [RelayCommand]
+    private async Task ShareAsync()
+    {
+        await _feed.CreatePostAsync(Photo);
+        await Shell.Current.DisplayAlert("Compartido", "Se publicó en el feed", "OK");
     }
 }
