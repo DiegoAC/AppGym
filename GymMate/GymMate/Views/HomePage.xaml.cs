@@ -30,5 +30,15 @@
         {
             await Shell.Current.GoToAsync("//routines");
         }
+
+        private async void OnSessionsClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//sessions");
+        }
+
+        private async void OnProgressClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("progress");
+        }
     }
 }
