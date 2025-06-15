@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             x:Class="GymMate.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel">
+    <VerticalStackLayout Padding="30" Spacing="20">
+        <HorizontalStackLayout>
+            <Label Text="Recordatorios diarios" VerticalOptions="Center" />
+            <Switch IsToggled="{Binding DailyRemindersEnabled}" />
+        </HorizontalStackLayout>
+        <TimePicker Time="{Binding DailyReminderTime}" />
+        <HorizontalStackLayout>
+            <Label Text="Avisos de nuevas rutinas" VerticalOptions="Center" />
+            <Switch IsToggled="{Binding NewRoutinesAlertsEnabled}" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>
