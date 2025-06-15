@@ -5,6 +5,7 @@ using Plugin.Firebase;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.LocalNotification;
 using Microcharts.Maui;
+using CommunityToolkit.Maui;
 using GymMate.Services;
 
 namespace GymMate
@@ -20,6 +21,7 @@ namespace GymMate
                 .UseFirebaseCloudMessaging()
                 .UseLocalNotification()
                 .UseMicrocharts()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -35,6 +37,7 @@ namespace GymMate
             builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddSingleton<INotificationService, NotificationService>();
+            builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
             builder.Services.AddTransient<ViewModels.RoutinesViewModel>();
@@ -47,6 +50,10 @@ namespace GymMate
             builder.Services.AddTransient<Views.SessionEditorPage>();
             builder.Services.AddTransient<ViewModels.SessionDetailViewModel>();
             builder.Services.AddTransient<Views.SessionDetailPage>();
+            builder.Services.AddTransient<ViewModels.ClassesViewModel>();
+            builder.Services.AddTransient<Views.ClassesPage>();
+            builder.Services.AddTransient<ViewModels.ClassDetailViewModel>();
+            builder.Services.AddTransient<Views.ClassDetailPage>();
             builder.Services.AddTransient<ViewModels.ProgressViewModel>();
             builder.Services.AddTransient<Views.ProgressPage>();
             builder.Services.AddTransient<ViewModels.SettingsViewModel>();
