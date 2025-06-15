@@ -64,7 +64,7 @@ public class FeedService : IFeedService
     {
         var uid = _auth.CurrentUserUid;
         if (string.IsNullOrEmpty(uid)) return Task.CompletedTask;
-        var profile = await _follow.GetProfileAsync(uid) ?? new UserProfile { Id = uid };
+        var profile = await _follow.GetProfileAsync(uid) ?? new UserProfile { Uid = uid };
         var post = new FeedPost
         {
             AuthorUid = uid,

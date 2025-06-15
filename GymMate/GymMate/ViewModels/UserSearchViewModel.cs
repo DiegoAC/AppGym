@@ -56,14 +56,14 @@ public partial class UserSearchViewModel : ObservableObject
         Results.Clear();
         await foreach (var profile in _follow.SearchAsync(Query))
         {
-            if (profile.Id == uid) continue;
+            if (profile.Uid == uid) continue;
             var item = new UserSearchItem
             {
-                Id = profile.Id!,
+                Id = profile.Uid!,
                 DisplayName = profile.DisplayName,
                 AvatarUrl = profile.AvatarUrl,
-                IsFollowing = await _follow.IsFollowingAsync(profile.Id!),
-                IsFollower = followers.Contains(profile.Id!)
+                IsFollowing = await _follow.IsFollowingAsync(profile.Uid!),
+                IsFollower = followers.Contains(profile.Uid!)
             };
             Results.Add(item);
         }
