@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using GymMate.Models;
 using GymMate.Services;
 using System.Collections.ObjectModel;
+using Plugin.Firebase.Firestore;
 
 namespace GymMate.ViewModels;
 
@@ -11,26 +12,25 @@ public partial class UserSearchItem : ObservableObject
     public string Id { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public string? AvatarUrl { get; set; }
+
     [ObservableProperty]
     private bool isFollowing;
-    [ObservableProperty]
-    private bool isFollower;
 }
 
 public partial class UserSearchViewModel : ObservableObject
 {
+    private readonly IFirebaseFirestore _firestore;
     private readonly IFollowService _follow;
-    private readonly IFirebaseAuthService _auth;
 
     public ObservableCollection<UserSearchItem> Results { get; } = new();
 
     [ObservableProperty]
     private string query = string.Empty;
 
-    public UserSearchViewModel(IFollowService follow, IFirebaseAuthService auth)
+    public UserSearchViewModel(IFirebaseFirestore firestore, IFollowService follow)
     {
+        _firestore = firestore;
         _follow = follow;
-        _auth = auth;
     }
 
     partial void OnQueryChanged(string value)
@@ -46,26 +46,26 @@ public partial class UserSearchViewModel : ObservableObject
 
     private async Task SearchAsync()
     {
-        var uid = _auth.CurrentUserUid;
-        var followers = new List<string>();
-        if (!string.IsNullOrEmpty(uid))
-        {
-            await foreach (var f in _follow.GetFollowersAsync(uid))
-                followers.Add(f);
-        }
         Results.Clear();
-        await foreach (var profile in _follow.SearchAsync(Query))
+        var snapshot = await _firestore.Collection("userProfiles")
+            .WhereGreaterThanOrEqualTo("DisplayName", Query)
+            .OrderBy("DisplayName")
+            .Limit(20)
+            .GetAsync();
+
+        foreach (var doc in snapshot.Documents)
         {
-            if (profile.Uid == uid) continue;
-            var item = new UserSearchItem
+            var profile = doc.ToObject<UserProfile>();
+            profile.Uid = doc.Id;
+            var followingObs = await _follow.IsFollowingAsync(profile.Uid);
+            var isFollowing = await followingObs.FirstAsync();
+            Results.Add(new UserSearchItem
             {
-                Id = profile.Uid!,
+                Id = profile.Uid,
                 DisplayName = profile.DisplayName,
                 AvatarUrl = profile.AvatarUrl,
-                IsFollowing = await _follow.IsFollowingAsync(profile.Uid!),
-                IsFollower = followers.Contains(profile.Uid!)
-            };
-            Results.Add(item);
+                IsFollowing = isFollowing
+            });
         }
     }
 
@@ -74,10 +74,15 @@ public partial class UserSearchViewModel : ObservableObject
     {
         if (item == null) return;
         if (item.IsFollowing)
+        {
+            item.IsFollowing = false;
             await _follow.UnfollowAsync(item.Id);
+        }
         else
+        {
+            item.IsFollowing = true;
             await _follow.FollowAsync(item.Id);
-        item.IsFollowing = await _follow.IsFollowingAsync(item.Id);
+        }
     }
 
     [RelayCommand]

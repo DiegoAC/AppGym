@@ -35,6 +35,7 @@ namespace GymMate
                 handlers.AddHandler<CarouselView, CarouselViewHandler2>();
             });
 
+            builder.Services.AddSingleton<IFirebaseFirestore>(_ => CrossFirebaseFirestore.Current);
             builder.Services.AddSingleton<IFirebaseAuthService>(_ => new FirebaseAuthService(CrossFirebaseFirestore.Current));
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddSingleton<INotificationService, NotificationService>();
