@@ -62,6 +62,8 @@ namespace GymMate
             builder.Services.AddTransient<Views.PhotoDetailPage>();
             builder.Services.AddTransient<ViewModels.FeedViewModel>();
             builder.Services.AddTransient<Views.FeedPage>();
+            builder.Services.AddTransient<ViewModels.CommentsViewModel>();
+            builder.Services.AddTransient<Views.CommentsPage>();
             builder.Services.AddTransient<ViewModels.ProgressViewModel>();
             builder.Services.AddTransient<Views.ProgressPage>();
             builder.Services.AddTransient<ViewModels.SettingsViewModel>();
