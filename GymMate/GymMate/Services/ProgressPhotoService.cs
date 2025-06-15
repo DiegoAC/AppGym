@@ -5,7 +5,7 @@ using GymMate.Models;
 public interface IProgressPhotoService
 {
     Task UploadAsync(FileResult file, string? caption);
-    IAsyncEnumerable<ProgressPhoto> GetPhotosAsync();
+    IAsyncEnumerable<ProgressPhoto> GetPhotosAsync(string? uid = null);
     Task DeleteAsync(string photoId);
 }
 
@@ -43,9 +43,9 @@ public class ProgressPhotoService : IProgressPhotoService
         return Task.CompletedTask;
     }
 
-    public async IAsyncEnumerable<ProgressPhoto> GetPhotosAsync()
+    public async IAsyncEnumerable<ProgressPhoto> GetPhotosAsync(string? uid = null)
     {
-        var uid = _auth.CurrentUserUid;
+        uid ??= _auth.CurrentUserUid;
         if (string.IsNullOrEmpty(uid)) yield break;
 
         if (_photos.TryGetValue(uid, out var dict))

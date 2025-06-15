@@ -51,6 +51,11 @@
             await Shell.Current.GoToAsync("//photos");
         }
 
+        private async void OnUsersClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//userSearch");
+        }
+
         private async void OnFeedClicked(object? sender, EventArgs e)
         {
             await Shell.Current.GoToAsync("//feed");

@@ -8,4 +8,6 @@ public class FeedPost
     public string? Caption { get; set; }
     public DateTime UploadedUtc { get; set; } = DateTime.UtcNow;
     public int LikesCount { get; set; }
+    public string AuthorName { get; set; } = string.Empty;
+    public string? AuthorAvatarUrl { get; set; }
 }

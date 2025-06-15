@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:models="clr-namespace:GymMate.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=Maui.FFImageLoading"
+             x:Class="GymMate.Views.ProfilePage"
+             x:DataType="vm:ProfileViewModel"
+             x:Name="page">
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="10">
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Image Source="{Binding AvatarUrl}" WidthRequest="80" HeightRequest="80" />
+                <VerticalStackLayout>
+                    <Label Text="{Binding DisplayName}" FontAttributes="Bold" />
+                    <Label Text="Seguir de vuelta" FontSize="12" TextColor="Green" IsVisible="{Binding ShowFollowBack}" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            <Button Text="Seguir" Command="{Binding ToggleFollowCommand}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
+                        <Setter Property="Text" Value="Dejar de seguir" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsMine}" Value="True">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Label Text="{Binding FollowersCount} seguidores" Padding="5" />
+                <Label Text="{Binding FollowingCount} seguidos" Padding="5" />
+            </HorizontalStackLayout>
+            <CollectionView ItemsSource="{Binding Photos}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Span="3" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ProgressPhoto">
+                        <ff:CachedImage Source="{Binding Url}" HeightRequest="100" WidthRequest="100" Aspect="AspectFill" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -10,6 +10,7 @@ public partial class FeedViewModel : ObservableObject
 {
     private readonly IFeedService _service;
     private readonly IFirebaseAuthService _auth;
+    private readonly IFollowService _follow;
 
     public ObservableCollection<FeedPost> Posts { get; } = new();
 
@@ -21,10 +22,14 @@ public partial class FeedViewModel : ObservableObject
     [ObservableProperty]
     private bool isRefreshing;
 
-    public FeedViewModel(IFeedService service, IFirebaseAuthService auth)
+    [ObservableProperty]
+    private bool noFollowing;
+
+    public FeedViewModel(IFeedService service, IFirebaseAuthService auth, IFollowService follow)
     {
         _service = service;
         _auth = auth;
+        _follow = follow;
         _service.PostUpdated += Service_PostUpdated;
     }
 
@@ -68,6 +73,15 @@ public partial class FeedViewModel : ObservableObject
         if (IsBusy) return;
         IsBusy = true;
         var list = new List<FeedPost>();
+        var uid = _auth.CurrentUserUid;
+        NoFollowing = false;
+        if (!string.IsNullOrEmpty(uid))
+        {
+            var following = new List<string>();
+            await foreach (var f in _follow.GetFollowingAsync(uid))
+                following.Add(f);
+            NoFollowing = following.Count == 0;
+        }
         await foreach (var p in _service.GetLatestAsync(20, _lastDate))
             list.Add(p);
         if (list.Count > 0)
@@ -98,5 +112,11 @@ public partial class FeedViewModel : ObservableObject
     private async Task OpenCommentsAsync(string postId)
     {
         await Shell.Current.GoToAsync($"comments?postId={postId}");
+    }
+
+    [RelayCommand]
+    private async Task OpenProfileAsync(string uid)
+    {
+        await Shell.Current.GoToAsync($"profile?uid={uid}");
     }
 }

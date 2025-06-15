@@ -23,21 +23,34 @@ public class FeedService : IFeedService
     private static readonly Dictionary<string, Dictionary<string, FeedComment>> _comments = new();
     private readonly IFirebaseAuthService _auth;
     private readonly INotificationService _notifications;
+    private readonly IFollowService _follow;
 
     public event EventHandler<FeedPost>? PostUpdated;
     public event EventHandler<string>? CommentsChanged;
 
-    public FeedService(IFirebaseAuthService auth, INotificationService notifications)
+    public FeedService(IFirebaseAuthService auth, INotificationService notifications, IFollowService follow)
     {
         _auth = auth;
         _notifications = notifications;
+        _follow = follow;
     }
 
     public async IAsyncEnumerable<FeedPost> GetLatestAsync(int pageSize = 20, DateTime? startAfter = null)
     {
-        var list = _posts.Values
-            .OrderByDescending(p => p.UploadedUtc)
-            .ToList();
+        IEnumerable<FeedPost> list = _posts.Values
+            .OrderByDescending(p => p.UploadedUtc);
+
+        var uid = _auth.CurrentUserUid;
+        if (!string.IsNullOrEmpty(uid))
+        {
+            var following = new List<string>();
+            await foreach (var f in _follow.GetFollowingAsync(uid))
+                following.Add(f);
+            if (following.Count > 0)
+                list = list.Where(p => following.Contains(p.AuthorUid));
+        }
+
+        list = list.ToList();
         if (startAfter != null)
             list = list.Where(p => p.UploadedUtc < startAfter).ToList();
         foreach (var p in list.Take(pageSize))
@@ -47,21 +60,23 @@ public class FeedService : IFeedService
         }
     }
 
-    public Task CreatePostAsync(ProgressPhoto photo)
+    public async Task CreatePostAsync(ProgressPhoto photo)
     {
         var uid = _auth.CurrentUserUid;
         if (string.IsNullOrEmpty(uid)) return Task.CompletedTask;
+        var profile = await _follow.GetProfileAsync(uid) ?? new UserProfile { Id = uid };
         var post = new FeedPost
         {
             AuthorUid = uid,
             PhotoUrl = photo.Url,
             Caption = photo.Caption,
             UploadedUtc = DateTime.UtcNow,
-            LikesCount = 0
+            LikesCount = 0,
+            AuthorName = profile.DisplayName,
+            AuthorAvatarUrl = profile.AvatarUrl
         };
         _posts[post.Id] = post;
         PostUpdated?.Invoke(this, post);
-        return Task.CompletedTask;
     }
 
     public Task LikeAsync(string postId, string uid)
