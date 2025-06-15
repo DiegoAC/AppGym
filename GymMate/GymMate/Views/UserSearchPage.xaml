@@ -7,7 +7,7 @@
              x:DataType="vm:UserSearchViewModel"
              x:Name="page">
     <VerticalStackLayout>
-        <SearchBar Text="{Binding Query}" Placeholder="Buscar" />
+        <SearchBar Text="{Binding Query, Mode=TwoWay}" Placeholder="Buscar usuarios" />
         <CollectionView ItemsSource="{Binding Results}">
             <CollectionView.EmptyView>
                 <Label Text="Sin resultados" HorizontalOptions="Center" VerticalOptions="Center" />
@@ -22,7 +22,6 @@
                         </Image>
                         <VerticalStackLayout>
                             <Label Text="{Binding DisplayName}" />
-                            <Label Text="Seguir de vuelta" FontSize="12" TextColor="Green" IsVisible="{Binding IsFollower}" />
                         </VerticalStackLayout>
                         <Button Text="Seguir"
                                 Command="{Binding Source={x:Reference page}, Path=BindingContext.ToggleFollowCommand}" CommandParameter="{Binding .}">

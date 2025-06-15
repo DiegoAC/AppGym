@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GymMate.Views.HomePage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="⚙️" Clicked="OnSettingsClicked" Priority="0" Order="Primary" />
+        <ToolbarItem Text="🔍 Usuarios" Clicked="OnUsersClicked" Priority="0" Order="Primary" />
+        <ToolbarItem Text="⚙️" Clicked="OnSettingsClicked" Priority="1" Order="Primary" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
@@ -56,10 +57,6 @@
             <Button
                 Text="Fotos"
                 Clicked="OnPhotosClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="🔍 Usuarios"
-                Clicked="OnUsersClicked"
                 HorizontalOptions="Fill" />
             <Button
                 Text="Feed"
