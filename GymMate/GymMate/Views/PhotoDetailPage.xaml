@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=Maui.FFImageLoading"
+             x:Class="GymMate.Views.PhotoDetailPage"
+             x:DataType="vm:PhotoDetailViewModel">
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+            <ff:CachedImage Source="{Binding Photo.Url}" Aspect="AspectFit" HeightRequest="300" />
+            <Label Text="{Binding Photo.UploadedUtc, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
+            <Label Text="{Binding Photo.Caption}" />
+            <Button Text="Eliminar" Command="{Binding DeleteCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

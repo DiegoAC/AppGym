@@ -46,6 +46,11 @@
             await Shell.Current.GoToAsync("progress");
         }
 
+        private async void OnPhotosClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//photos");
+        }
+
         private async void OnSettingsClicked(object? sender, EventArgs e)
         {
             await Shell.Current.GoToAsync("settings");
