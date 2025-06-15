@@ -18,6 +18,8 @@
             Routing.RegisterRoute("progress", typeof(Views.ProgressPage));
             Routing.RegisterRoute("feed", typeof(Views.FeedPage));
             Routing.RegisterRoute("comments", typeof(Views.CommentsPage));
+            Routing.RegisterRoute("userSearch", typeof(Views.UserSearchPage));
+            Routing.RegisterRoute("profile", typeof(Views.ProfilePage));
             Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
         }
     }

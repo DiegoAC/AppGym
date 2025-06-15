@@ -14,11 +14,26 @@
                     IsRefreshing="{Binding IsRefreshing}"
                     RefreshCommand="{Binding RefreshCommand}">
         <CollectionView.EmptyView>
-            <Label Text="No hay posts todavía" HorizontalOptions="Center" VerticalOptions="Center" />
+            <StackLayout>
+                <Label Text="No hay posts todavía" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label Text="Aún no sigues a nadie" HorizontalOptions="Center" IsVisible="{Binding NoFollowing}" />
+            </StackLayout>
         </CollectionView.EmptyView>
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:FeedPost">
                 <VerticalStackLayout Padding="10" Spacing="5">
+                    <HorizontalStackLayout Spacing="10">
+                        <Image Source="{Binding AuthorAvatarUrl}" WidthRequest="32" HeightRequest="32">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenProfileCommand}" CommandParameter="{Binding AuthorUid}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label Text="{Binding AuthorName}" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenProfileCommand}" CommandParameter="{Binding AuthorUid}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
                     <ff:CachedImage Source="{Binding PhotoUrl}" Aspect="AspectFill" HeightRequest="300" />
                     <Label Text="{Binding Caption}" />
                     <HorizontalStackLayout>

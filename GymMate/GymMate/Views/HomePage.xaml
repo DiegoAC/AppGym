@@ -58,6 +58,10 @@
                 Clicked="OnPhotosClicked"
                 HorizontalOptions="Fill" />
             <Button
+                Text="🔍 Usuarios"
+                Clicked="OnUsersClicked"
+                HorizontalOptions="Fill" />
+            <Button
                 Text="Feed"
                 Clicked="OnFeedClicked"
                 HorizontalOptions="Fill" />

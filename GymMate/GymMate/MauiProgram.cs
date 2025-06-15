@@ -39,6 +39,7 @@ namespace GymMate
             builder.Services.AddSingleton<INotificationService, NotificationService>();
             builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
+            builder.Services.AddSingleton<IFollowService, FollowService>();
             builder.Services.AddSingleton<IFeedService, FeedService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
@@ -62,6 +63,10 @@ namespace GymMate
             builder.Services.AddTransient<Views.PhotoDetailPage>();
             builder.Services.AddTransient<ViewModels.FeedViewModel>();
             builder.Services.AddTransient<Views.FeedPage>();
+            builder.Services.AddTransient<ViewModels.UserSearchViewModel>();
+            builder.Services.AddTransient<Views.UserSearchPage>();
+            builder.Services.AddTransient<ViewModels.ProfileViewModel>();
+            builder.Services.AddTransient<Views.ProfilePage>();
             builder.Services.AddTransient<ViewModels.CommentsViewModel>();
             builder.Services.AddTransient<Views.CommentsPage>();
             builder.Services.AddTransient<ViewModels.ProgressViewModel>();
