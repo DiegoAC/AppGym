@@ -32,6 +32,10 @@ namespace GymMate
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
+            builder.Services.AddTransient<ViewModels.RoutinesViewModel>();
+            builder.Services.AddTransient<Views.RoutinesPage>();
+            builder.Services.AddTransient<ViewModels.RoutineDetailViewModel>();
+            builder.Services.AddTransient<Views.RoutineDetailPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

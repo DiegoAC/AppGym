@@ -34,6 +34,10 @@
                 Text="Descanso"
                 Clicked="OnRestTimerClicked"
                 HorizontalOptions="Fill" />
+            <Button
+                Text="Rutinas"
+                Clicked="OnRoutinesClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

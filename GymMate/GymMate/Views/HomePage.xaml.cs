@@ -25,5 +25,10 @@
         {
             await Shell.Current.GoToAsync("resttimer");
         }
+
+        private async void OnRoutinesClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//routines");
+        }
     }
 }

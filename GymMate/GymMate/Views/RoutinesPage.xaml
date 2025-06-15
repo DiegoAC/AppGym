@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:models="clr-namespace:GymMate.Models"
+             x:Class="GymMate.Views.RoutinesPage"
+             x:DataType="vm:RoutinesViewModel"
+             x:Name="page">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Command="{Binding AddCommand}" />
+    </ContentPage.ToolbarItems>
+    <CollectionView ItemsSource="{Binding Routines}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:WorkoutRoutine">
+                <SwipeView>
+                    <SwipeView.RightItems>
+                        <SwipeItems>
+                            <SwipeItem Text="Edit"
+                                       Command="{Binding Source={x:Reference page}, Path=BindingContext.EditCommand}"
+                                       CommandParameter="{Binding .}" />
+                            <SwipeItem Text="Delete" BackgroundColor="Red"
+                                       Command="{Binding Source={x:Reference page}, Path=BindingContext.DeleteCommand}"
+                                       CommandParameter="{Binding .}" />
+                        </SwipeItems>
+                    </SwipeView.RightItems>
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Text="{Binding Name}" FontAttributes="Bold" />
+                        <Label Text="{Binding Description}" Grid.Row="1" FontSize="Small" />
+                    </Grid>
+                </SwipeView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>
