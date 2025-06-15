@@ -16,6 +16,7 @@
             Routing.RegisterRoute("photos", typeof(Views.PhotosPage));
             Routing.RegisterRoute("photoDetail", typeof(Views.PhotoDetailPage));
             Routing.RegisterRoute("progress", typeof(Views.ProgressPage));
+            Routing.RegisterRoute("feed", typeof(Views.FeedPage));
             Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
         }
     }

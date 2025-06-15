@@ -57,6 +57,10 @@
                 Text="Fotos"
                 Clicked="OnPhotosClicked"
                 HorizontalOptions="Fill" />
+            <Button
+                Text="Feed"
+                Clicked="OnFeedClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 
