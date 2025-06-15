@@ -11,6 +11,8 @@
             Routing.RegisterRoute("sessions", typeof(Views.SessionsPage));
             Routing.RegisterRoute("sessionEditor", typeof(Views.SessionEditorPage));
             Routing.RegisterRoute("sessionDetail", typeof(Views.SessionDetailPage));
+            Routing.RegisterRoute("classes", typeof(Views.ClassesPage));
+            Routing.RegisterRoute("classDetail", typeof(Views.ClassDetailPage));
             Routing.RegisterRoute("progress", typeof(Views.ProgressPage));
             Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
         }

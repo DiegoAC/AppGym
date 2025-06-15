@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             x:Class="GymMate.Views.ClassDetailPage"
+             x:DataType="vm:ClassDetailViewModel">
+    <StackLayout Padding="30" Spacing="10">
+        <Label Text="{Binding GymClass.Name}" FontAttributes="Bold" />
+        <Label Text="{Binding GymClass.StartsUtc, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
+        <Label Text="{Binding GymClass.DurationMin, StringFormat='{0} min'}" />
+        <ProgressBar Progress="{Binding GymClass.Occupancy}" />
+        <Label Text="{Binding GymClass.ReservedCount, StringFormat='Reservas: {0}'}" />
+        <Label Text="{Binding GymClass.Capacity, StringFormat='Cupo: {0}'}" />
+        <Button Text="{Binding ActionText}" Command="{Binding ToggleReservationCommand}" />
+    </StackLayout>
+</ContentPage>

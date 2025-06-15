@@ -46,6 +46,10 @@
                 Clicked="OnSessionsClicked"
                 HorizontalOptions="Fill" />
             <Button
+                Text="Clases"
+                Clicked="OnClassesClicked"
+                HorizontalOptions="Fill" />
+            <Button
                 Text="Progreso"
                 Clicked="OnProgressClicked"
                 HorizontalOptions="Fill" />
