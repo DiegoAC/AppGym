@@ -1,5 +1,16 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
 namespace GymMate.ViewModels;
 
-public class HomeViewModel
+public partial class HomeViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private int count;
+
+    [ICommand]
+    private void IncrementCount()
+    {
+        Count++;
+    }
 }
