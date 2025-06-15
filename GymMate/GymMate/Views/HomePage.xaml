@@ -38,6 +38,14 @@
                 Text="Rutinas"
                 Clicked="OnRoutinesClicked"
                 HorizontalOptions="Fill" />
+            <Button
+                Text="Sesiones"
+                Clicked="OnSessionsClicked"
+                HorizontalOptions="Fill" />
+            <Button
+                Text="Progreso"
+                Clicked="OnProgressClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

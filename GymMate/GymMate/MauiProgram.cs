@@ -3,6 +3,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Handlers.Items;
 using Plugin.Firebase;
 using Plugin.LocalNotification;
+using Microcharts.Maui;
 using GymMate.Services;
 
 namespace GymMate
@@ -16,6 +17,7 @@ namespace GymMate
                 .UseMauiApp<App>()
                 .UseFirebaseApp()
                 .UseLocalNotification()
+                .UseMicrocharts()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -36,6 +38,14 @@ namespace GymMate
             builder.Services.AddTransient<Views.RoutinesPage>();
             builder.Services.AddTransient<ViewModels.RoutineDetailViewModel>();
             builder.Services.AddTransient<Views.RoutineDetailPage>();
+            builder.Services.AddTransient<ViewModels.SessionsViewModel>();
+            builder.Services.AddTransient<Views.SessionsPage>();
+            builder.Services.AddTransient<ViewModels.SessionEditorViewModel>();
+            builder.Services.AddTransient<Views.SessionEditorPage>();
+            builder.Services.AddTransient<ViewModels.SessionDetailViewModel>();
+            builder.Services.AddTransient<Views.SessionDetailPage>();
+            builder.Services.AddTransient<ViewModels.ProgressViewModel>();
+            builder.Services.AddTransient<Views.ProgressPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

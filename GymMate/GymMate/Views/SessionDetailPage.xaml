@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:models="clr-namespace:GymMate.Models"
+             x:Class="GymMate.Views.SessionDetailPage"
+             x:DataType="vm:SessionDetailViewModel">
+    <StackLayout Padding="30" Spacing="10">
+        <Label Text="{Binding Session.DateUtc, StringFormat='{0:dd/MM/yyyy}'}" FontAttributes="Bold" />
+        <CollectionView ItemsSource="{Binding Session.Sets}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:SetRecord">
+                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,5">
+                        <Label Text="{Binding ExerciseName}" />
+                        <Label Grid.Column="1" Text="{Binding Reps}" />
+                        <Label Grid.Column="2" Text="{Binding WeightKg}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Button Text="Eliminar" Command="{Binding DeleteCommand}" />
+    </StackLayout>
+</ContentPage>
