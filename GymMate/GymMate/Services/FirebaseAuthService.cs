@@ -5,10 +5,12 @@ public interface IFirebaseAuthService
     Task<bool> LoginAsync(string email, string password);
     Task<bool> RegisterAsync(string email, string password);
     Task LogoutAsync();
+    string CurrentUserUid { get; }
 }
 
 public class FirebaseAuthService : IFirebaseAuthService
 {
+    public string CurrentUserUid { get; private set; } = "debug-user";
     public Task<bool> LoginAsync(string email, string password)
     {
         // TODO: Integrate Firebase Auth login
