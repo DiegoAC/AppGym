@@ -1,5 +1,12 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace GymMate.ViewModels;
 
-public class LoginViewModel
+public partial class LoginViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private string email = string.Empty;
+
+    [ObservableProperty]
+    private string password = string.Empty;
 }
