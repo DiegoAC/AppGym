@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             xmlns:models="clr-namespace:GymMate.Models"
+             x:Class="GymMate.Views.CommentsPage"
+             x:DataType="vm:CommentsViewModel"
+             x:Name="page">
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView x:Name="commentsView"
+                        ItemsSource="{Binding Comments}">
+            <CollectionView.EmptyView>
+                <Label Text="Sé el primero en comentar" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:FeedComment">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Eliminar" BackgroundColor="Red"
+                                           IsVisible="{Binding IsMine}"
+                                           Command="{Binding Source={x:Reference page}, Path=BindingContext.DeleteCommand}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Grid Padding="10">
+                            <Label Text="{Binding Text}" />
+                            <Label Text="{Binding CreatedUtc, StringFormat='{0:g}'}" FontSize="10" TextColor="Gray" />
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="10">
+            <Editor Text="{Binding Text}" Placeholder="Escribe un comentario" AutoSize="TextChanges" />
+            <Button Grid.Column="1" Text="Enviar" Command="{Binding SendCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

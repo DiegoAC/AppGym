@@ -93,4 +93,10 @@ public partial class FeedViewModel : ObservableObject
         else
             await _service.LikeAsync(post.Id, uid);
     }
+
+    [RelayCommand]
+    private async Task OpenCommentsAsync(string postId)
+    {
+        await Shell.Current.GoToAsync($"comments?postId={postId}");
+    }
 }
