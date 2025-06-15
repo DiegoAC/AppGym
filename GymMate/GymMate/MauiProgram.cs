@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Handlers.Items;
 using Plugin.Firebase;
+using Plugin.LocalNotification;
 using GymMate.Services;
 
 namespace GymMate
@@ -14,6 +15,7 @@ namespace GymMate
             builder
                 .UseMauiApp<App>()
                 .UseFirebaseApp()
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -28,6 +30,8 @@ namespace GymMate
 
             builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
+            builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
+            builder.Services.AddTransient<Views.RestTimerPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

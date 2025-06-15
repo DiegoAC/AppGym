@@ -20,5 +20,10 @@
 
             SemanticScreenReader.Announce(CounterBtn.Text);
         }
+
+        private async void OnRestTimerClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("resttimer");
+        }
     }
 }
