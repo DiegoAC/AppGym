@@ -4,6 +4,7 @@ using Microsoft.Maui.Controls.Handlers.Items;
 using Plugin.Firebase;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.LocalNotification;
+using Plugin.Firebase.Firestore;
 using Microcharts.Maui;
 using CommunityToolkit.Maui;
 using GymMate.Services;
@@ -34,7 +35,7 @@ namespace GymMate
                 handlers.AddHandler<CarouselView, CarouselViewHandler2>();
             });
 
-            builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
+            builder.Services.AddSingleton<IFirebaseAuthService>(_ => new FirebaseAuthService(CrossFirebaseFirestore.Current));
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddSingleton<INotificationService, NotificationService>();
             builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
