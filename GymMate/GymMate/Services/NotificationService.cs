@@ -9,6 +9,7 @@ public interface INotificationService
     Task ScheduleLocalAsync(DateTime when, string title, string body, string id);
     Task SubscribeAsync(string topic);
     Task UnsubscribeAsync(string topic);
+    Task CancelLocalAsync(string id);
     Task InitialiseAsync();
 }
 
@@ -56,6 +57,12 @@ public class NotificationService : INotificationService
 
     public Task UnsubscribeAsync(string topic)
         => FirebaseMessaging.UnsubscribeFromTopic(topic);
+
+    public Task CancelLocalAsync(string id)
+    {
+        NotificationCenter.Current.Cancel(id.GetHashCode());
+        return Task.CompletedTask;
+    }
 
     public Task InitialiseAsync()
     {

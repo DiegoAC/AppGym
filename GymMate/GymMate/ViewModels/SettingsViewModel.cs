@@ -1,64 +1,62 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Alerts;
 using Microsoft.Maui.Storage;
-
 using GymMate.Services;
 
 namespace GymMate.ViewModels;
 
-public partial class SettingsViewModel(INotificationService notifications) : ObservableObject
+public partial class SettingsViewModel(INotificationService notifications, IFirebaseAuthService auth, IPreferences preferences) : ObservableObject
 {
     private readonly INotificationService _notifications = notifications;
+    private readonly IFirebaseAuthService _auth = auth;
+    private readonly IPreferences _preferences = preferences;
 
     [ObservableProperty]
-    private bool dailyRemindersEnabled;
+    private bool isFeedPushEnabled;
 
     [ObservableProperty]
-    private TimeSpan dailyReminderTime = new(8,0,0);
+    private bool isDailyReminderEnabled;
 
     [ObservableProperty]
-    private bool newRoutinesAlertsEnabled;
+    private TimeSpan reminderTime;
 
-    partial void OnDailyRemindersEnabledChanged(bool value)
+    [RelayCommand]
+    private void Appearing()
     {
-        Preferences.Set(nameof(DailyRemindersEnabled), value);
-        if (value)
-            ScheduleReminder();
-    }
-
-    partial void OnDailyReminderTimeChanged(TimeSpan value)
-    {
-        Preferences.Set(nameof(DailyReminderTime), value.ToString());
-        if (DailyRemindersEnabled)
-            ScheduleReminder();
-    }
-
-    partial void OnNewRoutinesAlertsEnabledChanged(bool value)
-    {
-        Preferences.Set(nameof(NewRoutinesAlertsEnabled), value);
-        if (value)
-            _notifications.SubscribeAsync("new-routines");
-        else
-            _notifications.UnsubscribeAsync("new-routines");
+        IsFeedPushEnabled = _preferences.Get(nameof(IsFeedPushEnabled), false);
+        IsDailyReminderEnabled = _preferences.Get(nameof(IsDailyReminderEnabled), false);
+        var time = _preferences.Get(nameof(ReminderTime), "08:00:00");
+        TimeSpan.TryParse(time, out reminderTime);
+        OnPropertyChanged(nameof(ReminderTime));
     }
 
     [RelayCommand]
-    private Task RequestPermissionsAsync() => _notifications.RequestPermissionsAsync();
-
-    private void ScheduleReminder()
+    private async Task SaveAsync()
     {
-        var when = DateTime.Today.Add(DailyReminderTime);
-        if (when <= DateTime.Now)
-            when = when.AddDays(1);
-        _notifications.ScheduleLocalAsync(when, "GymMate", "Hora de entrenar", "daily_reminder");
-    }
+        _preferences.Set(nameof(IsFeedPushEnabled), IsFeedPushEnabled);
+        _preferences.Set(nameof(IsDailyReminderEnabled), IsDailyReminderEnabled);
+        _preferences.Set(nameof(ReminderTime), ReminderTime.ToString());
 
-    public void Load()
-    {
-        DailyRemindersEnabled = Preferences.Get(nameof(DailyRemindersEnabled), false);
-        var time = Preferences.Get(nameof(DailyReminderTime), "08:00:00");
-        TimeSpan.TryParse(time, out dailyReminderTime);
-        OnPropertyChanged(nameof(DailyReminderTime));
-        NewRoutinesAlertsEnabled = Preferences.Get(nameof(NewRoutinesAlertsEnabled), false);
+        var uid = _auth.CurrentUserUid;
+        if (!string.IsNullOrEmpty(uid))
+        {
+            if (IsFeedPushEnabled)
+                await _notifications.SubscribeAsync($"user_{uid}");
+            else
+                await _notifications.UnsubscribeAsync($"user_{uid}");
+        }
+
+        if (IsDailyReminderEnabled)
+        {
+            var when = DateTime.Today.AddDays(1).Add(ReminderTime);
+            await _notifications.ScheduleLocalAsync(when, "Hora de entrenar", "¡No olvides tu sesión de hoy!", "daily_reminder");
+        }
+        else
+        {
+            await _notifications.CancelLocalAsync("daily_reminder");
+        }
+
+        await Toast.Make("Ajustes guardados").Show();
     }
 }

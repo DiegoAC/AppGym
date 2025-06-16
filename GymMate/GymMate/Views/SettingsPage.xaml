@@ -6,13 +6,18 @@
              x:DataType="vm:SettingsViewModel">
     <VerticalStackLayout Padding="30" Spacing="20">
         <HorizontalStackLayout>
-            <Label Text="Recordatorios diarios" VerticalOptions="Center" />
-            <Switch IsToggled="{Binding DailyRemindersEnabled}" />
+            <Label Text="Notificaciones de nuevos posts"
+                   VerticalOptions="Center" />
+            <Switch IsToggled="{Binding IsFeedPushEnabled}" />
         </HorizontalStackLayout>
-        <TimePicker Time="{Binding DailyReminderTime}" />
         <HorizontalStackLayout>
-            <Label Text="Avisos de nuevas rutinas" VerticalOptions="Center" />
-            <Switch IsToggled="{Binding NewRoutinesAlertsEnabled}" />
+            <Label Text="Recordatorio diario de entrenamiento"
+                   VerticalOptions="Center" />
+            <Switch IsToggled="{Binding IsDailyReminderEnabled}" />
         </HorizontalStackLayout>
+        <TimePicker Time="{Binding ReminderTime}"
+                    Format="HH:mm"
+                    IsVisible="{Binding IsDailyReminderEnabled}" />
+        <Button Text="Guardar" Command="{Binding SaveCommand}" />
     </VerticalStackLayout>
 </ContentPage>
