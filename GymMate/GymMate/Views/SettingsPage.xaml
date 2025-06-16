@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:GymMate.ViewModels"
              x:Class="GymMate.Views.SettingsPage"
-             x:DataType="vm:SettingsViewModel">
-    <VerticalStackLayout Padding="30" Spacing="20">
-        <HorizontalStackLayout>
-            <Label Text="{DynamicResource NewPostNotifications}"
-                   VerticalOptions="Center" />
-            <Switch IsToggled="{Binding IsFeedPushEnabled}" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout>
-            <Label Text="{DynamicResource DailyReminder}"
-                   VerticalOptions="Center" />
-            <Switch IsToggled="{Binding IsDailyReminderEnabled}" />
-        </HorizontalStackLayout>
-        <TimePicker Time="{Binding ReminderTime}"
-                    Format="HH:mm"
-                    IsVisible="{Binding IsDailyReminderEnabled}" />
-        <Picker ItemsSource="{Binding Supported}"
-                ItemDisplayBinding="{Binding name}"
-                SelectedItem="{Binding SelectedLanguage}" />
-        <Button Text="{DynamicResource Save}" Command="{Binding SaveCommand}" />
-    </VerticalStackLayout>
+             x:DataType="vm:SettingsViewModel"
+             Title="{DynamicResource Settings}">
+
+    <toolkit:BottomSheet>
+        <toolkit:BottomSheet.HeaderTemplate>
+            <DataTemplate>
+                <Label Text="{DynamicResource Language}"
+                       FontAttributes="Bold" Margin="16,8" />
+            </DataTemplate>
+        </toolkit:BottomSheet.HeaderTemplate>
+    </toolkit:BottomSheet>
+
+    <TableRoot>
+        <TableSection Title="{DynamicResource Notifications}">
+            <SwitchCell
+                Text="{DynamicResource FeedPush}"
+                On="{Binding IsFeedPushEnabled}"
+                OnColor="{DynamicResource AccentColor}" />
+
+            <SwitchCell
+                Text="{DynamicResource DailyReminder}"
+                On="{Binding IsDailyReminderEnabled}"
+                OnColor="{DynamicResource AccentColor}" />
+        </TableSection>
+
+        <TableSection Title="{DynamicResource General}">
+            <TextCell
+                Text="{DynamicResource Language}"
+                Detail="{Binding CurrentLanguageName}"
+                Tapped="OnLanguageTapped" />
+        </TableSection>
+    </TableRoot>
 </ContentPage>

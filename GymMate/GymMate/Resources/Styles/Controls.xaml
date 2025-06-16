@@ -74,5 +74,12 @@
     <Style x:Key="chipAccent" TargetType="Label" BasedOn="{StaticResource chip}">
         <Setter Property="BackgroundColor" Value="{DynamicResource AccentColor}" />
         <Setter Property="TextColor" Value="White" />
+</Style>
+    <Style TargetType="SwitchCell">
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+    </Style>
+    <Style TargetType="TextCell">
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+        <Setter Property="DetailColor" Value="{DynamicResource TextColor}" />
     </Style>
 </ResourceDictionary>

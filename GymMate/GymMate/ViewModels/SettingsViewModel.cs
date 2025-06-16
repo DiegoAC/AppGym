@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Alerts;
 using Microsoft.Maui.Storage;
 using GymMate.Services;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace GymMate.ViewModels;
 
@@ -14,6 +15,11 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
     private readonly IPreferences _preferences = preferences;
     private readonly IAnalyticsService _analytics = analytics;
     private readonly ILocalizationService _localization = localization;
+
+    public ObservableCollection<string> LanguageNames { get; } = new();
+
+    [ObservableProperty]
+    private string currentLanguageName = string.Empty;
 
     [ObservableProperty]
     private bool isFeedPushEnabled;
@@ -37,6 +43,12 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
         var time = _preferences.Get(nameof(ReminderTime), "08:00:00");
         TimeSpan.TryParse(time, out reminderTime);
         OnPropertyChanged(nameof(ReminderTime));
+
+        LanguageNames.Clear();
+        foreach (var (_, name) in Supported)
+            LanguageNames.Add(name);
+
+        CurrentLanguageName = Supported.First(s => s.code == _localization.CurrentCode).name;
         SelectedLanguage = Supported.First(s => s.code == _localization.CurrentCode);
     }
 
@@ -72,4 +84,15 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
 
     partial void OnSelectedLanguageChanged((string code, string name) value)
         => _localization.SetCultureAsync(value.code);
+
+    [RelayCommand]
+    private async Task ChangeLanguageAsync(object selectedName)
+    {
+        if (selectedName is not string name)
+            return;
+
+        var code = Supported.First(s => s.name == name).code;
+        await _localization.SetCultureAsync(code);
+        CurrentLanguageName = name;
+    }
 }
