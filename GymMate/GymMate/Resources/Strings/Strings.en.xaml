@@ -38,8 +38,12 @@
     <sys:String x:Key="Exercise">Exercise</sys:String>
     <sys:String x:Key="Reps">Reps</sys:String>
     <sys:String x:Key="Kg">Kg</sys:String>
-    <sys:String x:Key="DailyReminder">Training reminder</sys:String>
+    <sys:String x:Key="DailyReminder">Daily reminder</sys:String>
     <sys:String x:Key="NewPostNotifications">New post notifications</sys:String>
+    <sys:String x:Key="Notifications">Notifications</sys:String>
+    <sys:String x:Key="FeedPush">New posts</sys:String>
+    <sys:String x:Key="General">General</sys:String>
+    <sys:String x:Key="Language">Language</sys:String>
     <sys:String x:Key="Progress">Progress</sys:String>
     <sys:String x:Key="Rest">Rest</sys:String>
     <sys:String x:Key="Comments">Comments</sys:String>
