@@ -1,0 +1,49 @@
+name: iOS Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-sign-upload:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+      - name: Install MAUI iOS workload
+        run: dotnet workload install maui-ios
+      - name: Restore certs & profiles
+        run: |
+          echo "$CERTIFICATES_BASE64" | base64 -d > certs.p12
+          echo "$PROVISIONING_BASE64" | base64 -d > profile.mobileprovision
+      - name: Import keychain
+        run: |
+          security create-keychain -p "" build.keychain
+          security import certs.p12 -k build.keychain -P "$MATCH_GIT_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles/
+          cp profile.mobileprovision "$_"
+      - name: Publish iOS app
+        run: |
+          dotnet publish GymMate/GymMate/GymMate.csproj \
+            -c Release -f net9.0-ios \
+            /p:RuntimeIdentifier=ios-arm64 \
+            /p:EnableAssemblyILStripping=false \
+            /p:ArchiveOnBuild=true
+      - name: Copy IPA
+        run: |
+          IPA_PATH=$(find GymMate -path '*publish*' -name '*.ipa' | head -n 1)
+          cp "$IPA_PATH" GymMate.ipa
+      - name: Create or update Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ios-v${{ github.run_number }}
+          name: "iOS build ${{ github.run_number }}"
+          files: GymMate.ipa
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

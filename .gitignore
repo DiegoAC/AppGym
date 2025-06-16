@@ -362,3 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 keystore.jks // no subir clave
+
+build.keychain
+certs.p12
+profile.mobileprovision
