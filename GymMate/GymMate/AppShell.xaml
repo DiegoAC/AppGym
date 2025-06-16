@@ -5,10 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:GymMate.Views"
     Title="GymMate">
-    <ShellContent
-        Title="{DynamicResource Login}"
-        ContentTemplate="{DataTemplate local:LoginPage}"
-        Route="Login" />
+    <FlyoutItem Title="{DynamicResource Login}" Route="login" IsVisible="False">
+        <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
+    </FlyoutItem>
     <FlyoutItem
         Title="{DynamicResource Home}">
         <FlyoutItem.Icon>

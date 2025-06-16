@@ -40,4 +40,25 @@
         <Setter Property="BackgroundColor" Value="{DynamicResource BackgroundColor}" />
         <Setter Property="BorderColor" Value="{DynamicResource SecondaryColor}" />
     </Style>
+
+    <Style x:Key="entryIcon" TargetType="Entry">
+        <Setter Property="BackgroundColor" Value="#FFFFFFDD" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Margin" Value="0,8" />
+        <Setter Property="Padding" Value="40,12,12,12" />
+        <Setter Property="FontImageSource.FontFamily" Value="MaterialIcons" />
+        <Setter Property="FontImageSource.Color" Value="{DynamicResource AccentColor}" />
+    </Style>
+
+    <Style x:Key="primaryButton" TargetType="Button">
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="HeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="linkButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{DynamicResource PrimaryColor}" />
+    </Style>
 </ResourceDictionary>
