@@ -117,6 +117,6 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenProfileAsync(string uid)
     {
-        await Shell.Current.GoToAsync($"profile?uid={uid}");
+        await Shell.Current.GoToAsync($"profile?Uid={uid}");
     }
 }

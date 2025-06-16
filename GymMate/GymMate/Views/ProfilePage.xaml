@@ -9,27 +9,26 @@
              x:Name="page">
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="10">
-            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                <Image Source="{Binding AvatarUrl}" WidthRequest="80" HeightRequest="80" />
-                <VerticalStackLayout>
-                    <Label Text="{Binding DisplayName}" FontAttributes="Bold" />
-                    <Label Text="Seguir de vuelta" FontSize="12" TextColor="Green" IsVisible="{Binding ShowFollowBack}" />
-                </VerticalStackLayout>
+            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Border HeightRequest="120" WidthRequest="120" CornerRadius="60">
+                    <Image Source="{Binding Profile.AvatarUrl}" Aspect="AspectFill" />
+                </Border>
+                <Label Text="{Binding Profile.DisplayName}" FontAttributes="Bold" FontSize="24" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                <Label Text="{Binding FollowersCount, StringFormat='{0} seguidores'}" />
+                <Label Text="{Binding FollowingCount, StringFormat='{0} siguiendo'}" />
             </HorizontalStackLayout>
-            <Button Text="Seguir" Command="{Binding ToggleFollowCommand}">
+            <Button Text="Seguir" Command="{Binding FollowOrUnfollowCommand}">
                 <Button.Triggers>
                     <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
                         <Setter Property="Text" Value="Dejar de seguir" />
                     </DataTrigger>
-                    <DataTrigger TargetType="Button" Binding="{Binding IsMine}" Value="True">
+                    <DataTrigger TargetType="Button" Binding="{Binding IsOwnProfile}" Value="True">
                         <Setter Property="IsVisible" Value="False" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Label Text="{Binding FollowersCount} seguidores" Padding="5" />
-                <Label Text="{Binding FollowingCount} seguidos" Padding="5" />
-            </HorizontalStackLayout>
             <CollectionView ItemsSource="{Binding Photos}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Span="3" />
