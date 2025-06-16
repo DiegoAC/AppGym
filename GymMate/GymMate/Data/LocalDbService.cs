@@ -3,6 +3,7 @@ namespace GymMate.Data;
 using SQLite;
 using GymMate.Models;
 using Microsoft.Maui.Storage;
+using System.Text.Json;
 
 public class LocalDbService
 {
@@ -20,6 +21,7 @@ public class LocalDbService
         if (_initialized) return;
         await _db.CreateTableAsync<FeedPostDto>();
         await _db.CreateTableAsync<WorkoutRoutineDto>();
+        await _db.CreateTableAsync<WorkoutSessionDto>();
         _initialized = true;
     }
 
@@ -102,6 +104,50 @@ public class LocalDbService
         await InitAsync();
         return await _db.Table<WorkoutRoutineDto>()
             .Where(r => r.IsPendingSync)
+            .ToListAsync();
+    }
+
+    public async Task SaveSessionAsync(WorkoutSession session, bool pendingSync)
+    {
+        await InitAsync();
+        var dto = new WorkoutSessionDto
+        {
+            Id = session.Id,
+            RoutineId = session.RoutineId,
+            DateUtc = session.DateUtc.Ticks,
+            JsonSets = JsonSerializer.Serialize(session.Sets),
+            IsPendingSync = pendingSync
+        };
+        await _db.InsertOrReplaceAsync(dto);
+    }
+
+    public async Task DeleteSessionAsync(string id)
+    {
+        await InitAsync();
+        await _db.DeleteAsync<WorkoutSessionDto>(id);
+    }
+
+    public async Task<List<WorkoutSession>> GetCachedSessionsAsync(string? routineId = null)
+    {
+        await InitAsync();
+        var query = _db.Table<WorkoutSessionDto>();
+        if (!string.IsNullOrEmpty(routineId))
+            query = query.Where(s => s.RoutineId == routineId);
+        var dtos = await query.OrderByDescending(x => x.DateUtc).ToListAsync();
+        return dtos.Select(d => new WorkoutSession
+        {
+            Id = d.Id,
+            RoutineId = d.RoutineId,
+            DateUtc = new DateTime(d.DateUtc, DateTimeKind.Utc),
+            Sets = JsonSerializer.Deserialize<List<SetRecord>>(d.JsonSets) ?? new List<SetRecord>()
+        }).ToList();
+    }
+
+    public async Task<List<WorkoutSessionDto>> GetPendingSessionsAsync()
+    {
+        await InitAsync();
+        return await _db.Table<WorkoutSessionDto>()
+            .Where(s => s.IsPendingSync)
             .ToListAsync();
     }
 }

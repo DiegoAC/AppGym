@@ -73,6 +73,7 @@
                 <PackageReference Include="Plugin.Firebase.Storage" Version="3.1.1" />
                 <PackageReference Include="Maui.FFImageLoading" Version="2.4.11.982" />
                 <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+                <PackageReference Include="System.Text.Json" Version="8.0.0" />
         </ItemGroup>
 
 </Project>
