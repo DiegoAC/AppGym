@@ -8,6 +8,8 @@ using Plugin.Firebase.Firestore;
 using Microcharts.Maui;
 using CommunityToolkit.Maui;
 using GymMate.Services;
+using GymMate.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GymMate
 {
@@ -42,6 +44,7 @@ namespace GymMate
             builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
             builder.Services.AddSingleton<IFollowService, FollowService>();
+            builder.Services.AddSingleton<LocalDbService>();
             builder.Services.AddSingleton<IFeedService, FeedService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
@@ -80,7 +83,10 @@ namespace GymMate
     		builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+            var localDb = app.Services.GetRequiredService<LocalDbService>();
+            localDb.InitAsync().GetAwaiter().GetResult();
+            return app;
         }
     }
 }
