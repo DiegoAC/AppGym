@@ -18,13 +18,15 @@ public class RoutinesService : IRoutinesService
 {
     private readonly IFirebaseFirestore _firestore;
     private readonly LocalDbService _localDb;
+    private readonly IAnalyticsService _analytics;
 
     public event EventHandler? RoutinesChanged;
 
-    public RoutinesService(IFirebaseFirestore firestore, LocalDbService localDb)
+    public RoutinesService(IFirebaseFirestore firestore, LocalDbService localDb, IAnalyticsService analytics)
     {
         _firestore = firestore;
         _localDb = localDb;
+        _analytics = analytics;
     }
 
     private CollectionReference GetCollection(string uid)
@@ -55,12 +57,14 @@ public class RoutinesService : IRoutinesService
         if (!Connectivity.Current.IsConnected)
         {
             await _localDb.SaveRoutineAsync(routine, true);
+            await _analytics.LogEventAsync("routine_created");
             RoutinesChanged?.Invoke(this, EventArgs.Empty);
             return;
         }
 
         await GetCollection(uid).Document(routine.Id).SetAsync(routine);
         await _localDb.SaveRoutineAsync(routine);
+        await _analytics.LogEventAsync("routine_created");
         RoutinesChanged?.Invoke(this, EventArgs.Empty);
     }
 

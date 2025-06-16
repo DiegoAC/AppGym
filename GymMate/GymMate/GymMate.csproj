@@ -73,6 +73,8 @@
                 <PackageReference Include="Plugin.Firebase.CloudMessaging" Version="3.1.1" />
                 <PackageReference Include="Microcharts.Maui" Version="0.9.5" />
                 <PackageReference Include="Plugin.Firebase.Firestore" Version="3.1.1" />
+                <PackageReference Include="Plugin.Firebase.Analytics" Version="3.1.1" />
+                <PackageReference Include="Plugin.Firebase.Crashlytics" Version="3.1.1" />
                 <PackageReference Include="CommunityToolkit.Maui" Version="8.2.0" />
                 <PackageReference Include="Plugin.Firebase.Storage" Version="3.1.1" />
                 <PackageReference Include="Maui.FFImageLoading" Version="2.4.11.982" />

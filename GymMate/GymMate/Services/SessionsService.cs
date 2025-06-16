@@ -19,13 +19,15 @@ public class SessionsService : ISessionsService
 {
     private readonly IFirebaseFirestore _firestore;
     private readonly LocalDbService _localDb;
+    private readonly IAnalyticsService _analytics;
 
     public event EventHandler? SessionsChanged;
 
-    public SessionsService(IFirebaseFirestore firestore, LocalDbService localDb)
+    public SessionsService(IFirebaseFirestore firestore, LocalDbService localDb, IAnalyticsService analytics)
     {
         _firestore = firestore;
         _localDb = localDb;
+        _analytics = analytics;
     }
 
     private CollectionReference GetCollection(string uid)
@@ -59,12 +61,14 @@ public class SessionsService : ISessionsService
         if (!Connectivity.Current.IsConnected)
         {
             await _localDb.SaveSessionAsync(session, true);
+            await _analytics.LogEventAsync("session_created");
             SessionsChanged?.Invoke(this, EventArgs.Empty);
             return;
         }
 
         await GetCollection(uid).Document(session.Id).SetAsync(session);
         await _localDb.SaveSessionAsync(session, false);
+        await _analytics.LogEventAsync("session_created");
         SessionsChanged?.Invoke(this, EventArgs.Empty);
     }
 

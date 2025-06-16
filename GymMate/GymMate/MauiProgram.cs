@@ -3,6 +3,8 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Handlers.Items;
 using Plugin.Firebase;
 using Plugin.Firebase.CloudMessaging;
+using Plugin.Firebase.Analytics;
+using Plugin.Firebase.Crashlytics;
 using Plugin.LocalNotification;
 using Plugin.Firebase.Firestore;
 using Microcharts.Maui;
@@ -23,6 +25,8 @@ namespace GymMate
                 .UseMauiApp<App>()
                 .UseFirebaseApp()
                 .UseFirebaseCloudMessaging()
+                .UseFirebaseAnalytics()
+                .UseFirebaseCrashlytics()
                 .UseLocalNotification()
                 .UseMicrocharts()
                 .UseMauiCommunityToolkit()
@@ -49,6 +53,7 @@ namespace GymMate
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
             builder.Services.AddSingleton<IFollowService, FollowService>();
             builder.Services.AddSingleton<LocalDbService>();
+            builder.Services.AddSingleton<IAnalyticsService, AnalyticsService>();
             builder.Services.AddSingleton<IFeedService, FeedService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
