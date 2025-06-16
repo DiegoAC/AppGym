@@ -14,77 +14,86 @@ public interface IClassBookingService
 
 public class ClassBookingService : IClassBookingService
 {
-    private static readonly Dictionary<string, GymClass> _classes = new();
-    private static readonly Dictionary<string, HashSet<string>> _reservations = new();
+    private readonly IFirebaseFirestore _firestore = CrossFirebaseFirestore.Current;
+    private readonly IDisposable _subscription;
 
     public event EventHandler? ClassesChanged;
 
     public ClassBookingService()
     {
-        // sample data
-        if (_classes.Count == 0)
-        {
-            var now = DateTime.UtcNow;
-            _classes["1"] = new GymClass { Id = "1", Name = "Yoga", StartsUtc = now.AddHours(2), DurationMin = 60, Capacity = 10 };
-            _classes["2"] = new GymClass { Id = "2", Name = "HIIT", StartsUtc = now.AddHours(5), DurationMin = 45, Capacity = 15 };
-        }
+        _subscription = _firestore.Collection("classes")
+            .AsObservable()
+            .Subscribe(_ => ClassesChanged?.Invoke(this, EventArgs.Empty));
     }
 
     public async IAsyncEnumerable<GymClass> GetUpcomingClassesAsync()
     {
-        var list = _classes.Values
-            .Where(c => c.StartsUtc >= DateTime.UtcNow)
-            .OrderBy(c => c.StartsUtc)
-            .ToList();
-        foreach (var c in list)
+        var snapshot = await _firestore.Collection("classes").GetAsync();
+        var list = new List<GymClass>();
+        foreach (var doc in snapshot.Documents)
         {
-            yield return c;
+            var gymClass = doc.ToObject<GymClass>();
+            if (gymClass != null && gymClass.StartsUtc >= DateTime.UtcNow)
+            {
+                gymClass.Id = doc.Id;
+                list.Add(gymClass);
+            }
+        }
+        foreach (var gc in list.OrderBy(c => c.StartsUtc))
+        {
+            yield return gc;
             await Task.Yield();
         }
     }
 
-    public Task<bool> IsReservedAsync(string classId, string uid)
+    public async Task<bool> IsReservedAsync(string classId, string uid)
     {
-        if (_reservations.TryGetValue(classId, out var set))
-            return Task.FromResult(set.Contains(uid));
-        return Task.FromResult(false);
+        var doc = await _firestore.Document($"classes/{classId}/reservations/{uid}").GetAsync();
+        return doc.Exists;
     }
 
-    public Task ReserveAsync(string classId, string uid)
+    public async Task ReserveAsync(string classId, string uid)
     {
-        lock (_classes)
+        var classRef = _firestore.Document($"classes/{classId}");
+        var resRef = classRef.Collection("reservations").Document(uid);
+
+        await _firestore.RunTransactionAsync(async transaction =>
         {
-            if (!_classes.TryGetValue(classId, out var gc))
-                return Task.CompletedTask;
-            if (gc.ReservedCount >= gc.Capacity)
+            var snap = await transaction.GetDocumentAsync(classRef);
+            if (!snap.Exists)
+                return;
+
+            var gymClass = snap.ToObject<GymClass>();
+            if (gymClass == null)
+                return;
+
+            if (gymClass.ReservedCount >= gymClass.Capacity)
                 throw new InvalidOperationException("full");
-            if (!_reservations.TryGetValue(classId, out var set))
+
+            transaction.Set(resRef, new { });
+            transaction.Update(classRef, new Dictionary<string, object>
             {
-                set = new();
-                _reservations[classId] = set;
-            }
-            if (set.Add(uid))
-            {
-                gc.ReservedCount++;
-                ClassesChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        return Task.CompletedTask;
+                { "ReservedCount", FieldValue.Increment(1) }
+            });
+        });
     }
 
-    public Task CancelReservationAsync(string classId, string uid)
+    public async Task CancelReservationAsync(string classId, string uid)
     {
-        lock (_classes)
+        var classRef = _firestore.Document($"classes/{classId}");
+        var resRef = classRef.Collection("reservations").Document(uid);
+
+        await _firestore.RunTransactionAsync(async transaction =>
         {
-            if (!_classes.TryGetValue(classId, out var gc))
-                return Task.CompletedTask;
-            if (_reservations.TryGetValue(classId, out var set) && set.Remove(uid))
+            var resSnap = await transaction.GetDocumentAsync(resRef);
+            if (!resSnap.Exists)
+                return;
+
+            transaction.Delete(resRef);
+            transaction.Update(classRef, new Dictionary<string, object>
             {
-                if (gc.ReservedCount > 0)
-                    gc.ReservedCount--;
-                ClassesChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        return Task.CompletedTask;
+                { "ReservedCount", FieldValue.Increment(-1) }
+            });
+        });
     }
 }
