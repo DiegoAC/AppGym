@@ -1,0 +1,28 @@
+// Firestore security rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /userProfiles/{uid} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == uid;
+
+      match /followers/{followerUid} {
+        allow read: if true;
+        allow write, delete: if request.auth.uid == followerUid;
+      }
+      match /following/{followingUid} {
+        allow read: if true;
+        allow write, delete: if request.auth.uid == uid;
+      }
+    }
+
+    match /feedPosts/{postId} {
+      allow read: if true; // consultas whereIn + orderBy
+      allow write: if request.auth != null
+                   && request.resource.data.AuthorUid == request.auth.uid;
+    }
+  }
+}
+
+// Después de merge, ejecutar: firebase deploy --only firestore:indexes,firestore:rules
