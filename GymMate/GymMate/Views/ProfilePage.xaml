@@ -19,10 +19,10 @@
                 <Label Text="{Binding FollowersCount, StringFormat='{0} seguidores'}" />
                 <Label Text="{Binding FollowingCount, StringFormat='{0} siguiendo'}" />
             </HorizontalStackLayout>
-            <Button Text="Seguir" Command="{Binding FollowOrUnfollowCommand}">
+            <Button Text="{DynamicResource Follow}" Command="{Binding FollowOrUnfollowCommand}">
                 <Button.Triggers>
                     <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
-                        <Setter Property="Text" Value="Dejar de seguir" />
+                        <Setter Property="Text" Value="{DynamicResource Following}" />
                     </DataTrigger>
                     <DataTrigger TargetType="Button" Binding="{Binding IsOwnProfile}" Value="True">
                         <Setter Property="IsVisible" Value="False" />

@@ -7,10 +7,10 @@
              x:DataType="vm:UserSearchViewModel"
              x:Name="page">
     <VerticalStackLayout>
-        <SearchBar Text="{Binding Query, Mode=TwoWay}" Placeholder="Buscar usuarios" />
+        <SearchBar Text="{Binding Query, Mode=TwoWay}" Placeholder="{DynamicResource SearchUsers}" />
         <CollectionView ItemsSource="{Binding Results}">
             <CollectionView.EmptyView>
-                <Label Text="Sin resultados" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label Text="{DynamicResource NoResults}" HorizontalOptions="Center" VerticalOptions="Center" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:UserSearchItem">
@@ -23,11 +23,11 @@
                         <VerticalStackLayout>
                             <Label Text="{Binding DisplayName}" />
                         </VerticalStackLayout>
-                        <Button Text="Seguir"
+                        <Button Text="{DynamicResource Follow}"
                                 Command="{Binding Source={x:Reference page}, Path=BindingContext.ToggleFollowCommand}" CommandParameter="{Binding .}">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
-                                    <Setter Property="Text" Value="Siguiendo" />
+                                    <Setter Property="Text" Value="{DynamicResource Following}" />
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>

@@ -18,6 +18,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <Button Text="Eliminar" Command="{Binding DeleteCommand}" />
+        <Button Text="{DynamicResource Delete}" Command="{Binding DeleteCommand}" />
     </StackLayout>
 </ContentPage>

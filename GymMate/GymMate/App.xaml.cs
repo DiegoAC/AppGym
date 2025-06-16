@@ -1,4 +1,7 @@
 using Plugin.Firebase.Crashlytics;
+using System.Globalization;
+using Microsoft.Maui.Storage;
+using System.Linq;
 
 namespace GymMate
 {
@@ -7,6 +10,11 @@ namespace GymMate
         public App()
         {
             InitializeComponent();
+            var code = Preferences.Get("LanguageCode", null) ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            var dict = Application.Current.Resources.MergedDictionaries
+                .First(md => md.Keys.Contains(code));
+            Application.Current.Resources.MergedDictionaries.Remove(dict);
+            Application.Current.Resources.MergedDictionaries.Add(dict);
             Application.Current.UserAppTheme = AppTheme.Unspecified;
             Application.Current.RequestedThemeChanged += (s, e) =>
             {

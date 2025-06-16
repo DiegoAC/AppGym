@@ -7,21 +7,21 @@
              x:DataType="vm:SessionEditorViewModel">
     <ScrollView>
         <VerticalStackLayout Padding="30" Spacing="20">
-            <Picker Title="Rutina" ItemsSource="{Binding Routines}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedRoutine}" />
+            <Picker Title="{DynamicResource Routine}" ItemsSource="{Binding Routines}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedRoutine}" />
             <DatePicker Date="{Binding Date}" />
             <CollectionView ItemsSource="{Binding Sets}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:SetRecord">
                         <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,5">
-                            <Entry Placeholder="Ejercicio" Text="{Binding ExerciseName}" />
-                            <Entry Grid.Column="1" WidthRequest="60" Keyboard="Numeric" Placeholder="Reps" Text="{Binding Reps}" />
-                            <Entry Grid.Column="2" WidthRequest="80" Keyboard="Numeric" Placeholder="Kg" Text="{Binding WeightKg}" />
+                            <Entry Placeholder="{DynamicResource Exercise}" Text="{Binding ExerciseName}" />
+                            <Entry Grid.Column="1" WidthRequest="60" Keyboard="Numeric" Placeholder="{DynamicResource Reps}" Text="{Binding Reps}" />
+                            <Entry Grid.Column="2" WidthRequest="80" Keyboard="Numeric" Placeholder="{DynamicResource Kg}" Text="{Binding WeightKg}" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Button Text="Añadir set" Command="{Binding AddSetCommand}" />
-            <Button Text="Guardar" Command="{Binding SaveCommand}" />
+            <Button Text="{DynamicResource AddSet}" Command="{Binding AddSetCommand}" />
+            <Button Text="{DynamicResource Save}" Command="{Binding SaveCommand}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

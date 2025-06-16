@@ -34,7 +34,7 @@
                     <HorizontalStackLayout>
                         <Label Text="{Binding LikesCount}" />
                         <Button Text="❤️" Command="{Binding Source={x:Reference page}, Path=BindingContext.ToggleLikeCommand}" CommandParameter="{Binding .}" />
-                        <Button Text="💬 Comentarios" Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenCommentsCommand}" CommandParameter="{Binding Id}" />
+                        <Button Text="{DynamicResource Comments}" Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenCommentsCommand}" CommandParameter="{Binding Id}" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </DataTemplate>
