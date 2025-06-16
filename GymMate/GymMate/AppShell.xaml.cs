@@ -5,6 +5,8 @@
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute("login", typeof(Views.LoginPage));
+            Routing.RegisterRoute("register", typeof(Views.RegisterPage));
             Routing.RegisterRoute("resttimer", typeof(Views.RestTimerPage));
             Routing.RegisterRoute("routines", typeof(Views.RoutinesPage));
             Routing.RegisterRoute("routineDetail", typeof(Views.RoutineDetailPage));

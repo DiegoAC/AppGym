@@ -46,4 +46,7 @@
     <sys:String x:Key="HelloWorld">Hola Mundo</sys:String>
     <sys:String x:Key="Welcome">Bienvenido a &#10;.NET Multi-platform App UI</sys:String>
     <sys:String x:Key="ClickMe">Púlsame</sys:String>
+    <sys:String x:Key="Tagline">Entrena con estilo</sys:String>
+    <sys:String x:Key="Back">Volver</sys:String>
+    <sys:String x:Key="ConfirmPassword">Confirmar contraseña</sys:String>
 </ResourceDictionary>
