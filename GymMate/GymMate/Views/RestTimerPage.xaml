@@ -11,6 +11,6 @@
                 Value="{Binding SelectedSeconds}" />
         <Label Text="{Binding RemainingSeconds, StringFormat=' {0} s'}"
                HorizontalOptions="Center" FontSize="Large" />
-        <Button Text="Start" Command="{Binding StartCommand}" />
+        <Button Text="{DynamicResource Start}" Command="{Binding StartCommand}" />
     </VerticalStackLayout>
 </ContentPage>

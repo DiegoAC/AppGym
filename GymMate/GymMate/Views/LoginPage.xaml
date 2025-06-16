@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GymMate.Views.LoginPage">
     <StackLayout Padding="30">
-        <Entry x:Name="EmailEntry" Placeholder="Email" />
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" />
-        <Button Text="Login" />
+        <Entry x:Name="EmailEntry" Placeholder="{DynamicResource Email}" />
+        <Entry x:Name="PasswordEntry" Placeholder="{DynamicResource Password}" IsPassword="True" />
+        <Button Text="{DynamicResource Login}" />
     </StackLayout>
 </ContentPage>

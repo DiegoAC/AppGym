@@ -6,80 +6,80 @@
     xmlns:local="clr-namespace:GymMate.Views"
     Title="GymMate">
     <ShellContent
-        Title="Login"
+        Title="{DynamicResource Login}"
         ContentTemplate="{DataTemplate local:LoginPage}"
         Route="Login" />
     <FlyoutItem
-        Title="Home">
+        Title="{DynamicResource Home}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe88a;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Home"
+            Title="{DynamicResource Home}"
             ContentTemplate="{DataTemplate local:HomePage}"
             Route="MainPage" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Feed">
+        Title="{DynamicResource Feed}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe0e5;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Feed"
+            Title="{DynamicResource Feed}"
             ContentTemplate="{DataTemplate local:FeedPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Rutinas">
+        Title="{DynamicResource Routines}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe3e8;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Rutinas"
+            Title="{DynamicResource Routines}"
             ContentTemplate="{DataTemplate local:RoutinesPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Sesiones">
+        Title="{DynamicResource Sessions}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe31a;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Sesiones"
+            Title="{DynamicResource Sessions}"
             ContentTemplate="{DataTemplate local:SessionsPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Fotos">
+        Title="{DynamicResource Photos}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe410;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Fotos"
+            Title="{DynamicResource Photos}"
             ContentTemplate="{DataTemplate local:PhotosPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Clases">
+        Title="{DynamicResource Classes}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xeb3b;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Clases"
+            Title="{DynamicResource Classes}"
             ContentTemplate="{DataTemplate local:ClassesPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Ajustes">
+        Title="{DynamicResource Settings}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe8b8;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Ajustes"
+            Title="{DynamicResource Settings}"
             ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
     <FlyoutItem
-        Title="Usuarios">
+        Title="{DynamicResource Users}">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="&#xe7fb;" FontFamily="MaterialIcons" Color="{DynamicResource TextColor}" />
         </FlyoutItem.Icon>
         <ShellContent
-            Title="Usuarios"
+            Title="{DynamicResource Users}"
             ContentTemplate="{DataTemplate local:UserSearchPage}" />
     </FlyoutItem>
 </Shell>

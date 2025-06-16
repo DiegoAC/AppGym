@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GymMate.Views.HomePage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="🔍 Usuarios" Clicked="OnUsersClicked" Priority="0" Order="Primary" />
+        <ToolbarItem Text="{DynamicResource Users}" Clicked="OnUsersClicked" Priority="0" Order="Primary" />
         <ToolbarItem Text="⚙️" Clicked="OnSettingsClicked" Priority="1" Order="Primary" />
     </ContentPage.ToolbarItems>
 
@@ -18,48 +18,48 @@
                 SemanticProperties.Description="dot net bot in a hovercraft number nine" />
 
             <Label
-                Text="Hello, World!"
+                Text="{DynamicResource HelloWorld}"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
 
             <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
+                Text="{DynamicResource Welcome}"
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
 
             <Button
                 x:Name="CounterBtn"
-                Text="Click me"
+                Text="{DynamicResource ClickMe}"
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Descanso"
+                Text="{DynamicResource Rest}"
                 Clicked="OnRestTimerClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Rutinas"
+                Text="{DynamicResource Routines}"
                 Clicked="OnRoutinesClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Sesiones"
+                Text="{DynamicResource Sessions}"
                 Clicked="OnSessionsClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Clases"
+                Text="{DynamicResource Classes}"
                 Clicked="OnClassesClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Progreso"
+                Text="{DynamicResource Progress}"
                 Clicked="OnProgressClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Fotos"
+                Text="{DynamicResource Photos}"
                 Clicked="OnPhotosClicked"
                 HorizontalOptions="Fill" />
             <Button
-                Text="Feed"
+                Text="{DynamicResource Feed}"
                 Clicked="OnFeedClicked"
                 HorizontalOptions="Fill" />
         </VerticalStackLayout>

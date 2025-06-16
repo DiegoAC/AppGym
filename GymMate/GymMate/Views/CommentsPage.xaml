@@ -10,14 +10,14 @@
         <CollectionView x:Name="commentsView"
                         ItemsSource="{Binding Comments}">
             <CollectionView.EmptyView>
-                <Label Text="Sé el primero en comentar" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label Text="{DynamicResource FirstToComment}" HorizontalOptions="Center" VerticalOptions="Center" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:FeedComment">
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Eliminar" BackgroundColor="Red"
+                                <SwipeItem Text="{DynamicResource Delete}" BackgroundColor="Red"
                                            IsVisible="{Binding IsMine}"
                                            Command="{Binding Source={x:Reference page}, Path=BindingContext.DeleteCommand}"
                                            CommandParameter="{Binding .}" />
@@ -32,8 +32,8 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="10">
-            <Editor Text="{Binding Text}" Placeholder="Escribe un comentario" AutoSize="TextChanges" />
-            <Button Grid.Column="1" Text="Enviar" Command="{Binding SendCommand}" />
+            <Editor Text="{Binding Text}" Placeholder="{DynamicResource CommentPlaceholder}" AutoSize="TextChanges" />
+            <Button Grid.Column="1" Text="{DynamicResource Send}" Command="{Binding SendCommand}" />
         </Grid>
     </Grid>
 </ContentPage>

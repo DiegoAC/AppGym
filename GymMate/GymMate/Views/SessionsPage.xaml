@@ -7,7 +7,7 @@
              x:DataType="vm:SessionsViewModel"
              x:Name="page">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddCommand}" />
+        <ToolbarItem Text="{DynamicResource Add}" Command="{Binding AddCommand}" />
     </ContentPage.ToolbarItems>
     <CollectionView ItemsSource="{Binding Sessions}">
         <CollectionView.ItemTemplate>
@@ -15,10 +15,10 @@
                 <SwipeView>
                     <SwipeView.RightItems>
                         <SwipeItems>
-                            <SwipeItem Text="View"
+                            <SwipeItem Text="{DynamicResource View}"
                                        Command="{Binding Source={x:Reference page}, Path=BindingContext.ViewCommand}"
                                        CommandParameter="{Binding .}" />
-                            <SwipeItem Text="Delete" BackgroundColor="Red"
+                            <SwipeItem Text="{DynamicResource Delete}" BackgroundColor="Red"
                                        Command="{Binding Source={x:Reference page}, Path=BindingContext.DeleteCommand}"
                                        CommandParameter="{Binding .}" />
                         </SwipeItems>

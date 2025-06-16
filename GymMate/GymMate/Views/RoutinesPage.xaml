@@ -7,7 +7,7 @@
              x:DataType="vm:RoutinesViewModel"
              x:Name="page">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddCommand}" />
+        <ToolbarItem Text="{DynamicResource Add}" Command="{Binding AddCommand}" />
     </ContentPage.ToolbarItems>
     <CollectionView ItemsSource="{Binding Routines}">
         <CollectionView.ItemTemplate>
@@ -15,10 +15,10 @@
                 <SwipeView>
                     <SwipeView.RightItems>
                         <SwipeItems>
-                            <SwipeItem Text="Edit"
+                            <SwipeItem Text="{DynamicResource Edit}"
                                        Command="{Binding Source={x:Reference page}, Path=BindingContext.EditCommand}"
                                        CommandParameter="{Binding .}" />
-                            <SwipeItem Text="Delete" BackgroundColor="Red"
+                            <SwipeItem Text="{DynamicResource Delete}" BackgroundColor="Red"
                                        Command="{Binding Source={x:Reference page}, Path=BindingContext.DeleteCommand}"
                                        CommandParameter="{Binding .}" />
                         </SwipeItems>

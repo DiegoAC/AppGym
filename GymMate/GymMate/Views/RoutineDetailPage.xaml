@@ -5,8 +5,8 @@
              x:Class="GymMate.Views.RoutineDetailPage"
              x:DataType="vm:RoutineDetailViewModel">
     <StackLayout Padding="30" Spacing="20">
-        <Entry Placeholder="Nombre" Text="{Binding Routine.Name}" />
-        <Editor Placeholder="Descripción" Text="{Binding Routine.Description}" AutoSize="TextChanges" />
-        <Button Text="Guardar" Command="{Binding SaveCommand}" />
+        <Entry Placeholder="{DynamicResource Name}" Text="{Binding Routine.Name}" />
+        <Editor Placeholder="{DynamicResource Description}" Text="{Binding Routine.Description}" AutoSize="TextChanges" />
+        <Button Text="{DynamicResource Save}" Command="{Binding SaveCommand}" />
     </StackLayout>
 </ContentPage>

@@ -10,8 +10,8 @@
             <ff:CachedImage Source="{Binding Photo.Url}" Aspect="AspectFit" HeightRequest="300" />
             <Label Text="{Binding Photo.UploadedUtc, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
             <Label Text="{Binding Photo.Caption}" />
-            <Button Text="Eliminar" Command="{Binding DeleteCommand}" />
-            <Button Text="Compartir en feed" Command="{Binding ShareCommand}" />
+            <Button Text="{DynamicResource Delete}" Command="{Binding DeleteCommand}" />
+            <Button Text="{DynamicResource ShareToFeed}" Command="{Binding ShareCommand}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

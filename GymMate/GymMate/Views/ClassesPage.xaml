@@ -13,7 +13,7 @@
                     <Label Text="{Binding Name}" FontAttributes="Bold" />
                     <Label Grid.Row="1" Text="{Binding StartsUtc, StringFormat='{0:dd/MM HH:mm}'}" FontSize="Small" />
                     <ProgressBar Grid.Row="2" Progress="{Binding Occupancy}" />
-                    <Button Grid.Row="3" Text="Detalles"
+                    <Button Grid.Row="3" Text="{DynamicResource Details}"
                             Command="{Binding Source={x:Reference page}, Path=BindingContext.DetailsCommand}"
                             CommandParameter="{Binding .}" />
                 </Grid>

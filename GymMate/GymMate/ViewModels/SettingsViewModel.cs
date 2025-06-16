@@ -3,15 +3,17 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Alerts;
 using Microsoft.Maui.Storage;
 using GymMate.Services;
+using System.Linq;
 
 namespace GymMate.ViewModels;
 
-public partial class SettingsViewModel(INotificationService notifications, IFirebaseAuthService auth, IPreferences preferences, IAnalyticsService analytics) : ObservableObject
+public partial class SettingsViewModel(INotificationService notifications, IFirebaseAuthService auth, IPreferences preferences, IAnalyticsService analytics, ILocalizationService localization) : ObservableObject
 {
     private readonly INotificationService _notifications = notifications;
     private readonly IFirebaseAuthService _auth = auth;
     private readonly IPreferences _preferences = preferences;
     private readonly IAnalyticsService _analytics = analytics;
+    private readonly ILocalizationService _localization = localization;
 
     [ObservableProperty]
     private bool isFeedPushEnabled;
@@ -22,6 +24,11 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
     [ObservableProperty]
     private TimeSpan reminderTime;
 
+    [ObservableProperty]
+    private (string code, string name) selectedLanguage;
+
+    public IEnumerable<(string code, string name)> Supported => _localization.Supported;
+
     [RelayCommand]
     private void Appearing()
     {
@@ -30,6 +37,7 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
         var time = _preferences.Get(nameof(ReminderTime), "08:00:00");
         TimeSpan.TryParse(time, out reminderTime);
         OnPropertyChanged(nameof(ReminderTime));
+        SelectedLanguage = Supported.First(s => s.code == _localization.CurrentCode);
     }
 
     [RelayCommand]
@@ -61,4 +69,7 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
         await _analytics.LogEventAsync("settings_saved");
         await Toast.Make("Ajustes guardados").Show();
     }
+
+    partial void OnSelectedLanguageChanged((string code, string name) value)
+        => _localization.SetCultureAsync(value.code);
 }

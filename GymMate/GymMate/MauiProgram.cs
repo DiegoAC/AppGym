@@ -53,6 +53,7 @@ namespace GymMate
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
             builder.Services.AddSingleton<IFollowService, FollowService>();
             builder.Services.AddSingleton<LocalDbService>();
+            builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
             builder.Services.AddSingleton<IAnalyticsService, AnalyticsService>();
             builder.Services.AddSingleton<IFeedService, FeedService>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
