@@ -7,21 +7,16 @@
              x:Class="GymMate.Views.FeedPage"
              x:DataType="vm:FeedViewModel"
              x:Name="page">
-    <CollectionView ItemsSource="{Binding Posts}"
-                    RemainingItemsThreshold="5"
-                    RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
-                    IsPullToRefreshEnabled="True"
-                    IsRefreshing="{Binding IsRefreshing}"
-                    RefreshCommand="{Binding RefreshCommand}">
-        <CollectionView.EmptyView>
-            <StackLayout>
-                <Label Text="No hay posts todavía" HorizontalOptions="Center" VerticalOptions="Center" />
-                <Label Text="Aún no sigues a nadie" HorizontalOptions="Center" IsVisible="{Binding NoFollowing}" />
-            </StackLayout>
-        </CollectionView.EmptyView>
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="models:FeedPost">
-                <VerticalStackLayout Padding="10" Spacing="5">
+    <Grid>
+        <CollectionView ItemsSource="{Binding Posts}"
+                        RemainingItemsThreshold="5"
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
+                        IsPullToRefreshEnabled="True"
+                        IsRefreshing="{Binding IsRefreshing}"
+                        RefreshCommand="{Binding RefreshCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:FeedPost">
+                    <VerticalStackLayout Padding="10" Spacing="5">
                     <HorizontalStackLayout Spacing="10">
                         <Image Source="{Binding AuthorAvatarUrl}" WidthRequest="32" HeightRequest="32">
                             <Image.GestureRecognizers>
@@ -44,5 +39,10 @@
                 </VerticalStackLayout>
             </DataTemplate>
         </CollectionView.ItemTemplate>
-    </CollectionView>
+        </CollectionView>
+        <Label Text="{Binding EmptyMessage}"
+               IsVisible="{Binding IsEmpty}"
+               HorizontalOptions="Center"
+               VerticalOptions="Center" />
+    </Grid>
 </ContentPage>
