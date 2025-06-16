@@ -49,4 +49,5 @@
     <sys:String x:Key="Tagline">Entrena con estilo</sys:String>
     <sys:String x:Key="Back">Volver</sys:String>
     <sys:String x:Key="ConfirmPassword">Confirmar contraseña</sys:String>
+    <sys:String x:Key="NoRoutines">Aún no tienes rutinas</sys:String>
 </ResourceDictionary>

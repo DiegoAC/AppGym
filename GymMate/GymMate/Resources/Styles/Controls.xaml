@@ -61,4 +61,18 @@
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="TextColor" Value="{DynamicResource PrimaryColor}" />
     </Style>
+
+    <!-- chip neutro -->
+    <Style x:Key="chip" TargetType="Label">
+        <Setter Property="BackgroundColor" Value="#FFFFFF33" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <!-- chip acento -->
+    <Style x:Key="chipAccent" TargetType="Label" BasedOn="{StaticResource chip}">
+        <Setter Property="BackgroundColor" Value="{DynamicResource AccentColor}" />
+        <Setter Property="TextColor" Value="White" />
+    </Style>
 </ResourceDictionary>
