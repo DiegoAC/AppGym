@@ -52,8 +52,12 @@
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\logo.png" Resize="True" BaseSize="300,185" />
 
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
+                <!-- Custom Fonts -->
+                <MauiFont Include="Resources\Fonts\*" />
+                <MauiFont Include="Resources\Fonts\Inter-Regular.ttf" Alias="Inter" />
+                <!-- TODO: copiar Inter-Regular.ttf en Resources/Fonts -->
+                <MauiFont Include="Resources\Fonts\MaterialIcons.ttf" Alias="MaterialIcons" />
+                <!-- TODO: copiar MaterialIcons.ttf en Resources/Fonts -->
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />

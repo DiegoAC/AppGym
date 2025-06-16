@@ -2,13 +2,20 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:GymMate"
+             xmlns:theme="clr-namespace:GymMate.Resources.Themes"
              x:Class="GymMate.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <theme:LightColors x:Key="Light" />
+                <theme:DarkColors x:Key="Dark" />
+                <ResourceDictionary Source="Resources/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <DynamicResource x:Key="PrimaryColor" Key="PrimaryColor" />
+            <DynamicResource x:Key="SecondaryColor" Key="SecondaryColor" />
+            <DynamicResource x:Key="BackgroundColor" Key="BackgroundColor" />
+            <DynamicResource x:Key="TextColor" Key="TextColor" />
+            <DynamicResource x:Key="AccentColor" Key="AccentColor" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ResourceDictionary x:Class="GymMate.Resources.Themes.LightColors">
+        <Color x:Key="PrimaryColor">#FF4CAF50</Color>
+        <Color x:Key="SecondaryColor">#FF8BC34A</Color>
+        <Color x:Key="BackgroundColor">#FFFFFFFF</Color>
+        <Color x:Key="TextColor">#FF000000</Color>
+        <Color x:Key="AccentColor">#FFFFC107</Color>
+    </ResourceDictionary>
+    <ResourceDictionary x:Class="GymMate.Resources.Themes.DarkColors">
+        <Color x:Key="PrimaryColor">#FF4CAF50</Color>
+        <Color x:Key="SecondaryColor">#FF8BC34A</Color>
+        <Color x:Key="BackgroundColor">#FF000000</Color>
+        <Color x:Key="TextColor">#FFFFFFFF</Color>
+        <Color x:Key="AccentColor">#FFFFC107</Color>
+    </ResourceDictionary>
+</ResourceDictionary>
