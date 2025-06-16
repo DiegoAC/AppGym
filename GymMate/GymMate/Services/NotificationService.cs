@@ -7,31 +7,32 @@ public interface INotificationService
 {
     Task RequestPermissionsAsync();
     Task ScheduleLocalAsync(DateTime when, string title, string body, string id);
-    Task SubscribeToTopicAsync(string topic);
-    Task UnsubscribeFromTopicAsync(string topic);
+    Task SubscribeAsync(string topic);
+    Task UnsubscribeAsync(string topic);
+    Task InitialiseAsync();
 }
 
 public class NotificationService : INotificationService
 {
     private readonly IRealtimeDbService _db;
-    private readonly IFirebaseAuthService _auth;
+    private readonly Lazy<IFirebaseAuthService> _auth;
 
-    public NotificationService(IRealtimeDbService db, IFirebaseAuthService auth)
+    public NotificationService(IRealtimeDbService db, Lazy<IFirebaseAuthService> auth)
     {
         _db = db;
         _auth = auth;
-        CrossFirebaseCloudMessaging.Current.TokenRefreshed += OnTokenRefreshed;
+        FirebaseMessaging.TokenRefreshed += OnTokenRefreshed;
     }
 
     private async void OnTokenRefreshed(object? sender, string token)
     {
-        var uid = _auth.CurrentUserUid;
+        var uid = _auth.Value.CurrentUserUid;
         if (string.IsNullOrEmpty(uid)) return;
         await _db.SaveDeviceTokenAsync(uid, token);
     }
 
     public Task RequestPermissionsAsync()
-        => CrossFirebaseCloudMessaging.Current.RequestPermissionAsync();
+        => FirebaseMessaging.RequestPermissionAsync();
 
     public Task ScheduleLocalAsync(DateTime when, string title, string body, string id)
     {
@@ -50,9 +51,28 @@ public class NotificationService : INotificationService
         return Task.CompletedTask;
     }
 
-    public Task SubscribeToTopicAsync(string topic)
-        => CrossFirebaseCloudMessaging.Current.SubscribeToTopic(topic);
+    public Task SubscribeAsync(string topic)
+        => FirebaseMessaging.SubscribeToTopic(topic);
 
-    public Task UnsubscribeFromTopicAsync(string topic)
-        => CrossFirebaseCloudMessaging.Current.UnsubscribeFromTopic(topic);
+    public Task UnsubscribeAsync(string topic)
+        => FirebaseMessaging.UnsubscribeFromTopic(topic);
+
+    public Task InitialiseAsync()
+    {
+        FirebaseMessaging.OnMessageReceived += (s, m) =>
+        {
+            if (m.Data.TryGetValue("title", out var title) &&
+                m.Data.TryGetValue("body", out var body))
+            {
+                var request = new NotificationRequest
+                {
+                    NotificationId = (title + body).GetHashCode(),
+                    Title = title,
+                    Description = body
+                };
+                NotificationCenter.Current.Show(request);
+            }
+        };
+        return RequestPermissionsAsync();
+    }
 }

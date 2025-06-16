@@ -37,9 +37,9 @@ public partial class SettingsViewModel(INotificationService notifications) : Obs
     {
         Preferences.Set(nameof(NewRoutinesAlertsEnabled), value);
         if (value)
-            _notifications.SubscribeToTopicAsync("new-routines");
+            _notifications.SubscribeAsync("new-routines");
         else
-            _notifications.UnsubscribeFromTopicAsync("new-routines");
+            _notifications.UnsubscribeAsync("new-routines");
     }
 
     [RelayCommand]
