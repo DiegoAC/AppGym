@@ -121,6 +121,10 @@ public class FeedService : IFeedService
         await _firestore.Collection("feedPosts").Document(post.Id).SetAsync(post);
         _posts[post.Id] = post;
         await _localDb.SavePostsAsync(new[] { post });
+        await foreach (var follower in _follow.GetFollowersAsync(uid))
+        {
+            await _notifications.SendAsync($"user_{follower}", "Nuevo post", profile.DisplayName);
+        }
         PostUpdated?.Invoke(this, post);
     }
 

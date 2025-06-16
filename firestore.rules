@@ -15,6 +15,10 @@ service cloud.firestore {
         allow read: if true;
         allow write, delete: if request.auth.uid == uid;
       }
+
+      match /deviceTokens/{token} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == uid;
+      }
     }
 
     match /feedPosts/{postId} {

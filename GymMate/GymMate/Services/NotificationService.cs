@@ -2,6 +2,10 @@ namespace GymMate.Services;
 
 using Plugin.Firebase.CloudMessaging;
 using Plugin.LocalNotification;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 public interface INotificationService
 {
@@ -10,6 +14,7 @@ public interface INotificationService
     Task SubscribeAsync(string topic);
     Task UnsubscribeAsync(string topic);
     Task CancelLocalAsync(string id);
+    Task SendAsync(string topic, string title, string body);
     Task InitialiseAsync();
 }
 
@@ -62,6 +67,33 @@ public class NotificationService : INotificationService
     {
         NotificationCenter.Current.Cancel(id.GetHashCode());
         return Task.CompletedTask;
+    }
+
+    public async Task SendAsync(string topic, string title, string body)
+    {
+        var serverKey = Environment.GetEnvironmentVariable("FCM_SERVER_KEY");
+        if (string.IsNullOrEmpty(serverKey))
+            return;
+
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={serverKey}");
+
+        var payload = new
+        {
+            to = $"/topics/{topic}",
+            data = new { title, body }
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        try
+        {
+            await client.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+        }
+        catch
+        {
+            // ignore errors
+        }
     }
 
     public Task InitialiseAsync()
