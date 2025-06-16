@@ -37,11 +37,6 @@ namespace GymMate
                     fonts.AddFont("Inter-Regular.ttf", "Inter");
                 });
 
-            builder.ConfigureMauiHandlers(handlers =>
-            {
-                handlers.AddHandler<CollectionView, CollectionViewHandler2>();
-                handlers.AddHandler<CarouselView, CarouselViewHandler2>();
-            });
 
             builder.Services.AddSingleton<IFirebaseFirestore>(_ => CrossFirebaseFirestore.Current);
             builder.Services.AddSingleton<INotificationService, NotificationService>();

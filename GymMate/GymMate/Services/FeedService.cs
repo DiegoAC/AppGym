@@ -90,7 +90,8 @@ public class FeedService : IFeedService
     public async Task CreatePostAsync(ProgressPhoto photo)
     {
         var uid = _auth.CurrentUserUid;
-        if (string.IsNullOrEmpty(uid)) return Task.CompletedTask;
+        if (string.IsNullOrEmpty(uid))
+            return;
         var profile = await _follow.GetProfileAsync(uid) ?? new UserProfile { Uid = uid };
         var post = new FeedPost
         {
