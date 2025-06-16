@@ -1,6 +1,8 @@
 namespace GymMate.Services;
 
 using GymMate.Models;
+using GymMate.Data;
+using Microsoft.Maui.Networking;
 
 public interface IFeedService
 {
@@ -24,19 +26,32 @@ public class FeedService : IFeedService
     private readonly IFirebaseAuthService _auth;
     private readonly INotificationService _notifications;
     private readonly IFollowService _follow;
+    private readonly LocalDbService _localDb;
 
     public event EventHandler<FeedPost>? PostUpdated;
     public event EventHandler<string>? CommentsChanged;
 
-    public FeedService(IFirebaseAuthService auth, INotificationService notifications, IFollowService follow)
+    public FeedService(IFirebaseAuthService auth, INotificationService notifications, IFollowService follow, LocalDbService localDb)
     {
         _auth = auth;
         _notifications = notifications;
         _follow = follow;
+        _localDb = localDb;
     }
 
     public async IAsyncEnumerable<FeedPost> GetLatestAsync(int pageSize = 20, DateTime? startAfter = null)
     {
+        var cached = await _localDb.GetCachedPostsAsync(pageSize);
+        if (cached.Any() && !Connectivity.Current.IsConnected)
+        {
+            foreach (var c in cached)
+            {
+                yield return c;
+                await Task.Yield();
+            }
+            yield break;
+        }
+
         var meUid = _auth.CurrentUserUid;
         var followUids = new List<string>();
 
@@ -60,7 +75,10 @@ public class FeedService : IFeedService
         if (startAfter != null)
             query = query.Where(p => p.UploadedUtc < startAfter.Value);
 
-        foreach (var post in query.Take(pageSize))
+        var list = query.Take(pageSize).ToList();
+        await _localDb.SavePostsAsync(list);
+
+        foreach (var post in list)
         {
             yield return post;
             await Task.Yield();
