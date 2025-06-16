@@ -36,9 +36,9 @@ namespace GymMate
             });
 
             builder.Services.AddSingleton<IFirebaseFirestore>(_ => CrossFirebaseFirestore.Current);
-            builder.Services.AddSingleton<IFirebaseAuthService>(_ => new FirebaseAuthService(CrossFirebaseFirestore.Current));
-            builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddSingleton<INotificationService, NotificationService>();
+            builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
+            builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
             builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
             builder.Services.AddSingleton<IFollowService, FollowService>();
