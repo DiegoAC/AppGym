@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using GymMate.Models;
 
 namespace GymMate.Services;
 
@@ -9,7 +10,9 @@ public interface IFollowService
     Task FollowAsync(string targetUid);
     Task UnfollowAsync(string targetUid);
     IAsyncEnumerable<string> GetFollowingAsync(string uid);
+    IAsyncEnumerable<string> GetFollowersAsync(string uid);
     Task<IObservable<bool>> IsFollowingAsync(string targetUid);
+    Task<UserProfile?> GetProfileAsync(string uid);
 }
 
 public class FollowService : IFollowService
@@ -60,6 +63,16 @@ public class FollowService : IFollowService
         }
     }
 
+    public async IAsyncEnumerable<string> GetFollowersAsync(string uid)
+    {
+        var snapshot = await _firestore.Collection($"userProfiles/{uid}/followers").GetAsync();
+        foreach (var doc in snapshot.Documents)
+        {
+            yield return doc.Id;
+            await Task.Yield();
+        }
+    }
+
     public Task<IObservable<bool>> IsFollowingAsync(string targetUid)
     {
         var uid = _auth.CurrentUserUid;
@@ -71,5 +84,19 @@ public class FollowService : IFollowService
         var docRef = _firestore.Document($"userProfiles/{uid}/following/{targetUid}");
         var observable = docRef.AsObservable().Select(snapshot => snapshot.Exists);
         return Task.FromResult(observable);
+    }
+
+    public async Task<UserProfile?> GetProfileAsync(string uid)
+    {
+        var doc = _firestore.Document($"userProfiles/{uid}");
+        var snapshot = await doc.GetAsync();
+        if (snapshot.Exists)
+        {
+            var profile = snapshot.ToObject<UserProfile>();
+            if (profile != null)
+                profile.Uid = uid;
+            return profile;
+        }
+        return null;
     }
 }
