@@ -27,16 +27,18 @@ public class FeedService : IFeedService
     private readonly INotificationService _notifications;
     private readonly IFollowService _follow;
     private readonly LocalDbService _localDb;
+    private readonly IAnalyticsService _analytics;
 
     public event EventHandler<FeedPost>? PostUpdated;
     public event EventHandler<string>? CommentsChanged;
 
-    public FeedService(IFirebaseAuthService auth, INotificationService notifications, IFollowService follow, LocalDbService localDb)
+    public FeedService(IFirebaseAuthService auth, INotificationService notifications, IFollowService follow, LocalDbService localDb, IAnalyticsService analytics)
     {
         _auth = auth;
         _notifications = notifications;
         _follow = follow;
         _localDb = localDb;
+        _analytics = analytics;
     }
 
     public async IAsyncEnumerable<FeedPost> GetLatestAsync(int pageSize = 20, DateTime? startAfter = null)
@@ -118,7 +120,7 @@ public class FeedService : IFeedService
             post.LikesCount = set.Count;
             PostUpdated?.Invoke(this, post);
         }
-        return Task.CompletedTask;
+        return _analytics.LogEventAsync("post_like");
     }
 
     public Task UnlikeAsync(string postId, string uid)
@@ -130,7 +132,7 @@ public class FeedService : IFeedService
             post.LikesCount = set.Count;
             PostUpdated?.Invoke(this, post);
         }
-        return Task.CompletedTask;
+        return _analytics.LogEventAsync("post_like");
     }
 
     public Task<bool> IsLikedAsync(string postId, string uid)

@@ -12,11 +12,13 @@ public class FirebaseAuthService : IFirebaseAuthService
 {
     private readonly IFirebaseFirestore _firestore;
     private readonly Lazy<INotificationService> _notificationService;
+    private readonly IAnalyticsService _analytics;
 
-    public FirebaseAuthService(IFirebaseFirestore firestore, Lazy<INotificationService> notificationService)
+    public FirebaseAuthService(IFirebaseFirestore firestore, Lazy<INotificationService> notificationService, IAnalyticsService analytics)
     {
         _firestore = firestore;
         _notificationService = notificationService;
+        _analytics = analytics;
     }
 
     public string CurrentUserUid { get; private set; } = "debug-user";
@@ -44,6 +46,8 @@ public class FirebaseAuthService : IFirebaseAuthService
         await EnsureUserProfileAsync(CurrentUserUid, email);
         await _notificationService.Value.InitialiseAsync();
         await _notificationService.Value.SubscribeAsync($"user_{CurrentUserUid}");
+        await _analytics.SetUserIdAsync(CurrentUserUid);
+        await _analytics.LogEventAsync("login_success");
         return true;
     }
 
@@ -51,6 +55,8 @@ public class FirebaseAuthService : IFirebaseAuthService
     {
         // TODO: Integrate Firebase Auth register
         await EnsureUserProfileAsync(CurrentUserUid, email);
+        await _analytics.SetUserIdAsync(CurrentUserUid);
+        await _analytics.LogEventAsync("login_success");
         return true;
     }
 

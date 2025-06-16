@@ -6,11 +6,12 @@ using GymMate.Services;
 
 namespace GymMate.ViewModels;
 
-public partial class SettingsViewModel(INotificationService notifications, IFirebaseAuthService auth, IPreferences preferences) : ObservableObject
+public partial class SettingsViewModel(INotificationService notifications, IFirebaseAuthService auth, IPreferences preferences, IAnalyticsService analytics) : ObservableObject
 {
     private readonly INotificationService _notifications = notifications;
     private readonly IFirebaseAuthService _auth = auth;
     private readonly IPreferences _preferences = preferences;
+    private readonly IAnalyticsService _analytics = analytics;
 
     [ObservableProperty]
     private bool isFeedPushEnabled;
@@ -57,6 +58,7 @@ public partial class SettingsViewModel(INotificationService notifications, IFire
             await _notifications.CancelLocalAsync("daily_reminder");
         }
 
+        await _analytics.LogEventAsync("settings_saved");
         await Toast.Make("Ajustes guardados").Show();
     }
 }

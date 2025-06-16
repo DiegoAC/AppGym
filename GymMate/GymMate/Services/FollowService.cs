@@ -19,10 +19,12 @@ public class FollowService : IFollowService
 {
     private readonly IFirebaseAuthService _auth;
     private readonly IFirebaseFirestore _firestore = CrossFirebaseFirestore.Current;
+    private readonly IAnalyticsService _analytics;
 
-    public FollowService(IFirebaseAuthService auth)
+    public FollowService(IFirebaseAuthService auth, IAnalyticsService analytics)
     {
         _auth = auth;
+        _analytics = analytics;
     }
 
     public async Task FollowAsync(string targetUid)
@@ -37,6 +39,7 @@ public class FollowService : IFollowService
             transaction.Set(followingDoc, new { });
             transaction.Set(followerDoc, new { });
         });
+        await _analytics.LogEventAsync("follow_user");
     }
 
     public async Task UnfollowAsync(string targetUid)
@@ -51,6 +54,7 @@ public class FollowService : IFollowService
             transaction.Delete(followingDoc);
             transaction.Delete(followerDoc);
         });
+        await _analytics.LogEventAsync("follow_user");
     }
 
     public async IAsyncEnumerable<string> GetFollowingAsync(string uid)
