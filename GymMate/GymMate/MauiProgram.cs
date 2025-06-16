@@ -51,6 +51,10 @@ namespace GymMate
             builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
             builder.Services.AddSingleton<IAnalyticsService, AnalyticsService>();
             builder.Services.AddSingleton<IFeedService, FeedService>();
+            builder.Services.AddTransient<ViewModels.LoginViewModel>();
+            builder.Services.AddTransient<Views.LoginPage>();
+            builder.Services.AddTransient<ViewModels.RegisterViewModel>();
+            builder.Services.AddTransient<Views.RegisterPage>();
             builder.Services.AddTransient<ViewModels.RestTimerViewModel>();
             builder.Services.AddTransient<Views.RestTimerPage>();
             builder.Services.AddTransient<ViewModels.RoutinesViewModel>();
