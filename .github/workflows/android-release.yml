@@ -1,0 +1,49 @@
+name: Android Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-sign-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install Android SDK platform
+        run: sdkmanager "platforms;android-34"
+      - name: Restore keystore
+        run: echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > keystore.jks
+      - name: Publish Android App Bundle
+        run: |
+          dotnet publish GymMate/GymMate/GymMate.csproj \
+            -c Release \
+            -f net9.0-android \
+            -p:AndroidPackageFormat=bundle \
+            -p:AndroidSigningKeyStore="$(pwd)/keystore.jks" \
+            -p:AndroidSigningKeyAlias="$KEY_ALIAS" \
+            -p:AndroidSigningKeyPass="$KEY_PASSWORD" \
+            -p:AndroidSigningStorePass="$KEYSTORE_PASSWORD"
+      - name: Copy AAB
+        run: cp $(find GymMate/bin/Release/net9.0-android -name "*.aab") app-release.aab
+      - name: Create or reuse release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "Build ${{ github.run_number }}"
+          draft: false
+          prerelease: true
+          files: app-release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
