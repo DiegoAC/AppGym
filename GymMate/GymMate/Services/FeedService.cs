@@ -3,6 +3,7 @@ namespace GymMate.Services;
 using GymMate.Models;
 using GymMate.Data;
 using Microsoft.Maui.Networking;
+using Plugin.Firebase.Firestore;
 
 public interface IFeedService
 {
@@ -28,6 +29,7 @@ public class FeedService : IFeedService
     private readonly IFollowService _follow;
     private readonly LocalDbService _localDb;
     private readonly IAnalyticsService _analytics;
+    private readonly IFirebaseFirestore _firestore = CrossFirebaseFirestore.Current;
 
     public event EventHandler<FeedPost>? PostUpdated;
     public event EventHandler<string>? CommentsChanged;
@@ -62,22 +64,35 @@ public class FeedService : IFeedService
             await foreach (var f in _follow.GetFollowingAsync(meUid))
             {
                 followUids.Add(f);
-                if (followUids.Count >= 100)
+                if (followUids.Count >= 10)
                     break;
             }
+            // incluir el propio uid para mostrar posts personales
+            followUids.Add(meUid);
         }
 
-        IEnumerable<FeedPost> query = _posts.Values;
+        if (followUids.Count == 0)
+            yield break;
 
-        if (followUids.Count > 0)
-            query = query.Where(p => followUids.Contains(p.AuthorUid));
-
-        query = query.OrderByDescending(p => p.UploadedUtc);
+        var query = _firestore.Collection("feedPosts")
+            .WhereIn("AuthorUid", followUids.ToArray())
+            .OrderByDescending("UploadedUtc");
 
         if (startAfter != null)
-            query = query.Where(p => p.UploadedUtc < startAfter.Value);
+            query = query.WhereLessThan("UploadedUtc", startAfter.Value);
 
-        var list = query.Take(pageSize).ToList();
+        var snapshot = await query.Limit(pageSize).GetAsync();
+        var list = new List<FeedPost>();
+        foreach (var doc in snapshot.Documents)
+        {
+            var post = doc.ToObject<FeedPost>();
+            if (post != null)
+            {
+                post.Id = doc.Id;
+                _posts[post.Id] = post;
+                list.Add(post);
+            }
+        }
         await _localDb.SavePostsAsync(list);
 
         foreach (var post in list)
@@ -103,62 +118,74 @@ public class FeedService : IFeedService
             AuthorName = profile.DisplayName,
             AuthorAvatarUrl = profile.AvatarUrl
         };
+        await _firestore.Collection("feedPosts").Document(post.Id).SetAsync(post);
         _posts[post.Id] = post;
+        await _localDb.SavePostsAsync(new[] { post });
         PostUpdated?.Invoke(this, post);
     }
 
-    public Task LikeAsync(string postId, string uid)
+    public async Task LikeAsync(string postId, string uid)
     {
-        if (!_posts.TryGetValue(postId, out var post))
-            return Task.CompletedTask;
-        if (!_likes.TryGetValue(postId, out var set))
+        var postRef = _firestore.Document($"feedPosts/{postId}");
+        await postRef.Collection("likes").Document(uid).SetAsync(new { });
+        await postRef.UpdateAsync("LikesCount", FieldValue.Increment(1));
+
+        if (_posts.TryGetValue(postId, out var post))
         {
-            set = new();
-            _likes[postId] = set;
-        }
-        if (set.Add(uid))
-        {
-            post.LikesCount = set.Count;
+            post.LikesCount++;
+            await _localDb.SavePostsAsync(new[] { post });
             PostUpdated?.Invoke(this, post);
         }
-        return _analytics.LogEventAsync("post_like");
+        await _analytics.LogEventAsync("post_like");
     }
 
-    public Task UnlikeAsync(string postId, string uid)
+    public async Task UnlikeAsync(string postId, string uid)
     {
-        if (!_posts.TryGetValue(postId, out var post))
-            return Task.CompletedTask;
-        if (_likes.TryGetValue(postId, out var set) && set.Remove(uid))
+        var postRef = _firestore.Document($"feedPosts/{postId}");
+        await postRef.Collection("likes").Document(uid).DeleteAsync();
+        await postRef.UpdateAsync("LikesCount", FieldValue.Increment(-1));
+
+        if (_posts.TryGetValue(postId, out var post))
         {
-            post.LikesCount = set.Count;
+            post.LikesCount = Math.Max(0, post.LikesCount - 1);
+            await _localDb.SavePostsAsync(new[] { post });
             PostUpdated?.Invoke(this, post);
         }
-        return _analytics.LogEventAsync("post_like");
+        await _analytics.LogEventAsync("post_like");
     }
 
-    public Task<bool> IsLikedAsync(string postId, string uid)
+    public async Task<bool> IsLikedAsync(string postId, string uid)
     {
-        if (_likes.TryGetValue(postId, out var set))
-            return Task.FromResult(set.Contains(uid));
-        return Task.FromResult(false);
+        var doc = await _firestore.Document($"feedPosts/{postId}/likes/{uid}").GetAsync();
+        return doc.Exists;
     }
 
     public async IAsyncEnumerable<FeedComment> GetCommentsAsync(string postId)
     {
-        if (_comments.TryGetValue(postId, out var dict))
+        var snapshot = await _firestore.Collection($"feedPosts/{postId}/comments")
+            .OrderBy("CreatedUtc")
+            .GetAsync();
+
+        var dict = _comments.GetValueOrDefault(postId) ?? new Dictionary<string, FeedComment>();
+        _comments[postId] = dict;
+
+        foreach (var doc in snapshot.Documents)
         {
-            foreach (var c in dict.Values.OrderBy(c => c.CreatedUtc))
+            var comment = doc.ToObject<FeedComment>();
+            if (comment != null)
             {
-                yield return c;
+                comment.Id = doc.Id;
+                dict[comment.Id] = comment;
+                yield return comment;
                 await Task.Yield();
             }
         }
     }
 
-    public Task AddCommentAsync(string postId, string text, string uid)
+    public async Task AddCommentAsync(string postId, string text, string uid)
     {
         if (!_posts.ContainsKey(postId))
-            return Task.CompletedTask;
+            return;
 
         if (!_comments.TryGetValue(postId, out var dict))
         {
@@ -173,27 +200,34 @@ public class FeedService : IFeedService
             CreatedUtc = DateTime.UtcNow
         };
         dict[comment.Id] = comment;
+
+        await _firestore.Collection($"feedPosts/{postId}/comments")
+            .Document(comment.Id)
+            .SetAsync(comment);
+
         CommentsChanged?.Invoke(this, postId);
 
-        if (_posts.TryGetValue(postId, out var post) && post.AuthorUid == uid)
+        if (_posts.TryGetValue(postId, out var post) && post.AuthorUid != uid)
         {
-            _notifications.ScheduleLocalAsync(DateTime.Now, "Nuevo comentario", text, comment.Id);
+            await _notifications.ScheduleLocalAsync(DateTime.Now, "Nuevo comentario", text, comment.Id);
         }
-
-        return Task.CompletedTask;
     }
 
-    public Task DeleteCommentAsync(string postId, string commentId, string uid)
+    public async Task DeleteCommentAsync(string postId, string commentId, string uid)
     {
-        if (_comments.TryGetValue(postId, out var dict) && dict.TryGetValue(commentId, out var comment))
+        var docRef = _firestore.Document($"feedPosts/{postId}/comments/{commentId}");
+        var snap = await docRef.GetAsync();
+        if (snap.Exists)
         {
-            if (comment.AuthorUid == uid)
+            var comment = snap.ToObject<FeedComment>();
+            if (comment != null && comment.AuthorUid == uid)
             {
-                dict.Remove(commentId);
+                await docRef.DeleteAsync();
+                if (_comments.TryGetValue(postId, out var dict))
+                    dict.Remove(commentId);
                 CommentsChanged?.Invoke(this, postId);
             }
         }
-        return Task.CompletedTask;
     }
 }
 
