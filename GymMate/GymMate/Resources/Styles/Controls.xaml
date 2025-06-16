@@ -4,6 +4,17 @@
     <Style TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
         <Setter Property="FontFamily" Value="Inter" />
+</Style>
+    <Style x:Key="h1" TargetType="Label">
+        <Setter Property="FontSize" Value="36" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="buttonLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{DynamicResource TextColor}" />

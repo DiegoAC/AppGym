@@ -1,69 +1,29 @@
-﻿namespace GymMate.Views
+namespace GymMate.Views
 {
     public partial class HomePage : ContentPage
     {
-        int count = 0;
-
         public HomePage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            count++;
+            base.OnAppearing();
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+            foreach (var element in ButtonsCollection.VisibleViews)
+            {
+                if (element is VisualElement ve)
+                    ve.Scale = 0;
+            }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+            await Task.Delay(200);
 
-        private async void OnRestTimerClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("resttimer");
-        }
-
-        private async void OnRoutinesClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//routines");
-        }
-
-        private async void OnSessionsClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//sessions");
-        }
-
-        private async void OnClassesClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//classes");
-        }
-
-        private async void OnProgressClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("progress");
-        }
-
-        private async void OnPhotosClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//photos");
-        }
-
-        private async void OnUsersClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//userSearch");
-        }
-
-        private async void OnFeedClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//feed");
-        }
-
-        private async void OnSettingsClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//settings");
+            foreach (var element in ButtonsCollection.VisibleViews)
+            {
+                if (element is VisualElement ve)
+                    await ve.ScaleTo(1, 250, Easing.SinOut);
+            }
         }
     }
 }

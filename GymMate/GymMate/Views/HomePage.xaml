@@ -1,68 +1,57 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="GymMate.Views.HomePage">
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             x:Class="GymMate.Views.HomePage"
+             x:DataType="vm:HomeViewModel"
+             x:Name="page">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="{DynamicResource Users}" Clicked="OnUsersClicked" Priority="0" Order="Primary" />
-        <ToolbarItem Text="⚙️" Clicked="OnSettingsClicked" Priority="1" Order="Primary" />
+        <ToolbarItem Text="{DynamicResource Users}"
+                     Command="{Binding NavigateAsyncCommand}"
+                     CommandParameter="//userSearch"
+                     Priority="0"
+                     Order="Primary" />
+        <ToolbarItem Text="⚙️"
+                     Command="{Binding NavigateAsyncCommand}"
+                     CommandParameter="//settings"
+                     Priority="1"
+                     Order="Primary" />
     </ContentPage.ToolbarItems>
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                Source="logo.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a hovercraft number nine" />
+    <Grid RowDefinitions="200,*">
+        <Grid>
+            <BoxView>
+                <BoxView.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{DynamicResource PrimaryColor}" Offset="0" />
+                        <GradientStop Color="{DynamicResource AccentColor}" Offset="1" />
+                    </LinearGradientBrush>
+                </BoxView.Fill>
+            </BoxView>
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Image Source="logo.png" HeightRequest="100" />
+                <Label Text="GymMate" Style="{DynamicResource h1}" />
+                <Label Text="{DynamicResource Tagline}" Style="h2" Opacity="0.8" />
+            </StackLayout>
+        </Grid>
 
-            <Label
-                Text="{DynamicResource HelloWorld}"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
-
-            <Label
-                Text="{DynamicResource Welcome}"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="{DynamicResource ClickMe}"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Rest}"
-                Clicked="OnRestTimerClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Routines}"
-                Clicked="OnRoutinesClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Sessions}"
-                Clicked="OnSessionsClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Classes}"
-                Clicked="OnClassesClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Progress}"
-                Clicked="OnProgressClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Photos}"
-                Clicked="OnPhotosClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                Text="{DynamicResource Feed}"
-                Clicked="OnFeedClicked"
-                HorizontalOptions="Fill" />
-        </VerticalStackLayout>
-    </ScrollView>
-
+        <CollectionView x:Name="ButtonsCollection" Grid.Row="1" ItemsSource="{Binding HomeButtons}" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Span="2" HorizontalItemSpacing="20" VerticalItemSpacing="20" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:HomeButtonVm">
+                    <Frame CornerRadius="16" HasShadow="True" Padding="20">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label Text="{Binding Icon}" FontFamily="MaterialIcons" FontSize="36" HorizontalOptions="Center" />
+                            <Label Text="{Binding Text}" Style="{DynamicResource buttonLabel}" />
+                        </VerticalStackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.NavigateAsyncCommand}" CommandParameter="{Binding Route}" />
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
