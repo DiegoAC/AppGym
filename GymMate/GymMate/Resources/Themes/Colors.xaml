@@ -7,6 +7,8 @@
         <Color x:Key="BackgroundColor">#FFFFFFFF</Color>
         <Color x:Key="TextColor">#FF000000</Color>
         <Color x:Key="AccentColor">#FFFFC107</Color>
+        <Color x:Key="AccentGradientStart">#FF4CAF50</Color>
+        <Color x:Key="AccentGradientEnd">#FFFFC107</Color>
     </ResourceDictionary>
     <ResourceDictionary x:Class="GymMate.Resources.Themes.DarkColors">
         <Color x:Key="PrimaryColor">#FF4CAF50</Color>
@@ -14,5 +16,7 @@
         <Color x:Key="BackgroundColor">#FF000000</Color>
         <Color x:Key="TextColor">#FFFFFFFF</Color>
         <Color x:Key="AccentColor">#FFFFC107</Color>
+        <Color x:Key="AccentGradientStart">#FF4CAF50</Color>
+        <Color x:Key="AccentGradientEnd">#FFFFC107</Color>
     </ResourceDictionary>
 </ResourceDictionary>
