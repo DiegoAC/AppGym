@@ -10,6 +10,7 @@ using CommunityToolkit.Maui;
 using GymMate.Services;
 using GymMate.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Networking;
 
 namespace GymMate
 {
@@ -41,6 +42,7 @@ namespace GymMate
             builder.Services.AddSingleton<INotificationService, NotificationService>();
             builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
             builder.Services.AddSingleton<IRealtimeDbService, RealtimeDbService>();
+            builder.Services.AddSingleton<IRoutinesService, RoutinesService>();
             builder.Services.AddSingleton<IClassBookingService, ClassBookingService>();
             builder.Services.AddSingleton<IProgressPhotoService, ProgressPhotoService>();
             builder.Services.AddSingleton<IFollowService, FollowService>();
@@ -86,6 +88,16 @@ namespace GymMate
             var app = builder.Build();
             var localDb = app.Services.GetRequiredService<LocalDbService>();
             localDb.InitAsync().GetAwaiter().GetResult();
+            var routines = app.Services.GetRequiredService<IRoutinesService>();
+            Connectivity.ConnectivityChanged += async (s, e) =>
+            {
+                if (e.NetworkAccess == NetworkAccess.Internet)
+                {
+                    var uid = app.Services.GetRequiredService<IFirebaseAuthService>().CurrentUserUid;
+                    if (!string.IsNullOrEmpty(uid))
+                        await routines.SyncPendingAsync(uid);
+                }
+            };
             return app;
         }
     }
