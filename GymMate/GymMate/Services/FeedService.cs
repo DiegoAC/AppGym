@@ -37,25 +37,32 @@ public class FeedService : IFeedService
 
     public async IAsyncEnumerable<FeedPost> GetLatestAsync(int pageSize = 20, DateTime? startAfter = null)
     {
-        IEnumerable<FeedPost> list = _posts.Values
-            .OrderByDescending(p => p.UploadedUtc);
+        var meUid = _auth.CurrentUserUid;
+        var followUids = new List<string>();
 
-        var uid = _auth.CurrentUserUid;
-        if (!string.IsNullOrEmpty(uid))
+        if (!string.IsNullOrEmpty(meUid))
         {
-            var following = new List<string>();
-            await foreach (var f in _follow.GetFollowingAsync(uid))
-                following.Add(f);
-            if (following.Count > 0)
-                list = list.Where(p => following.Contains(p.AuthorUid));
+            await foreach (var f in _follow.GetFollowingAsync(meUid))
+            {
+                followUids.Add(f);
+                if (followUids.Count >= 100)
+                    break;
+            }
         }
 
-        list = list.ToList();
+        IEnumerable<FeedPost> query = _posts.Values;
+
+        if (followUids.Count > 0)
+            query = query.Where(p => followUids.Contains(p.AuthorUid));
+
+        query = query.OrderByDescending(p => p.UploadedUtc);
+
         if (startAfter != null)
-            list = list.Where(p => p.UploadedUtc < startAfter).ToList();
-        foreach (var p in list.Take(pageSize))
+            query = query.Where(p => p.UploadedUtc < startAfter.Value);
+
+        foreach (var post in query.Take(pageSize))
         {
-            yield return p;
+            yield return post;
             await Task.Yield();
         }
     }

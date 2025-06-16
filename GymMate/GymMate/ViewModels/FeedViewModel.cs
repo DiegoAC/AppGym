@@ -23,7 +23,10 @@ public partial class FeedViewModel : ObservableObject
     private bool isRefreshing;
 
     [ObservableProperty]
-    private bool noFollowing;
+    private bool isEmpty;
+
+    [ObservableProperty]
+    private string emptyMessage = string.Empty;
 
     public FeedViewModel(IFeedService service, IFirebaseAuthService auth, IFollowService follow)
     {
@@ -74,20 +77,33 @@ public partial class FeedViewModel : ObservableObject
         IsBusy = true;
         var list = new List<FeedPost>();
         var uid = _auth.CurrentUserUid;
-        NoFollowing = false;
+        var followUids = new List<string>();
+
         if (!string.IsNullOrEmpty(uid))
         {
-            var following = new List<string>();
             await foreach (var f in _follow.GetFollowingAsync(uid))
-                following.Add(f);
-            NoFollowing = following.Count == 0;
+            {
+                followUids.Add(f);
+                if (followUids.Count >= 100)
+                    break;
+            }
         }
+
         await foreach (var p in _service.GetLatestAsync(20, _lastDate))
             list.Add(p);
         if (list.Count > 0)
             _lastDate = list.Last().UploadedUtc;
         foreach (var p in list)
             Posts.Add(p);
+
+        IsEmpty = Posts.Count == 0;
+        if (IsEmpty)
+        {
+            EmptyMessage = followUids.Count == 0
+                ? "Empieza a seguir a usuarios para ver su actividad"
+                : "No hay posts todavía";
+        }
+
         IsBusy = false;
     }
 
