@@ -11,6 +11,8 @@ public interface IFollowService
     Task UnfollowAsync(string targetUid);
     IAsyncEnumerable<string> GetFollowingAsync(string uid);
     IAsyncEnumerable<string> GetFollowersAsync(string uid);
+    IObservable<int> GetFollowersObservable(string uid);
+    IObservable<int> GetFollowingObservable(string uid);
     Task<IObservable<bool>> IsFollowingAsync(string targetUid);
     Task<UserProfile?> GetProfileAsync(string uid);
 }
@@ -75,6 +77,22 @@ public class FollowService : IFollowService
             yield return doc.Id;
             await Task.Yield();
         }
+    }
+
+    public IObservable<int> GetFollowersObservable(string uid)
+    {
+        return _firestore
+            .Collection($"userProfiles/{uid}/followers")
+            .AsObservable()
+            .Select(snap => snap.Documents.Count);
+    }
+
+    public IObservable<int> GetFollowingObservable(string uid)
+    {
+        return _firestore
+            .Collection($"userProfiles/{uid}/following")
+            .AsObservable()
+            .Select(snap => snap.Documents.Count);
     }
 
     public Task<IObservable<bool>> IsFollowingAsync(string targetUid)

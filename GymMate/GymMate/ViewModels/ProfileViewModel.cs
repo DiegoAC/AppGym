@@ -14,6 +14,9 @@ public partial class ProfileViewModel : ObservableObject
     private readonly IProgressPhotoService _photos;
     private readonly IFirebaseAuthService _auth;
 
+    private IDisposable? _followersSub;
+    private IDisposable? _followingSub;
+
     [ObservableProperty] private string uid = string.Empty;
     [ObservableProperty] private UserProfile? profile;
     [ObservableProperty] private bool isOwnProfile;
@@ -33,6 +36,8 @@ public partial class ProfileViewModel : ObservableObject
 
     partial void OnUidChanged(string value)
     {
+        _followersSub?.Dispose();
+        _followingSub?.Dispose();
         _ = LoadAsync();
     }
 
@@ -51,15 +56,12 @@ public partial class ProfileViewModel : ObservableObject
 
         Profile = await _follow.GetProfileAsync(Uid);
 
-        var followers = new List<string>();
-        await foreach (var f in _follow.GetFollowersAsync(Uid))
-            followers.Add(f);
-        FollowersCount = followers.Count;
-
-        var following = new List<string>();
-        await foreach (var f in _follow.GetFollowingAsync(Uid))
-            following.Add(f);
-        FollowingCount = following.Count;
+        _followersSub?.Dispose();
+        _followingSub?.Dispose();
+        _followersSub = _follow.GetFollowersObservable(Uid)
+            .Subscribe(count => MainThread.BeginInvokeOnMainThread(() => FollowersCount = count));
+        _followingSub = _follow.GetFollowingObservable(Uid)
+            .Subscribe(count => MainThread.BeginInvokeOnMainThread(() => FollowingCount = count));
 
         if (!IsOwnProfile)
         {
