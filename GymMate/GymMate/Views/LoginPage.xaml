@@ -2,7 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="GymMate.Views.LoginPage">
+             xmlns:vm="clr-namespace:GymMate.ViewModels"
+             x:Class="GymMate.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             x:Name="page">
     <Grid>
         <!-- TODO: copy bg_gym.jpg into Resources/Images -->
         <Image Source="bg_gym.jpg" Aspect="AspectFill">
@@ -14,17 +17,24 @@
             <Image Source="logo.png" HeightRequest="120" />
             <Label Text="{DynamicResource Tagline}" Style="{DynamicResource h2}" />
             <Frame CornerRadius="24" Padding="24" BackgroundColor="#FFFFFFAA">
-                <Entry Style="{DynamicResource entryIcon}" Placeholder="{DynamicResource Email}">
+                <Entry Style="{DynamicResource entryIcon}"
+                       Placeholder="{DynamicResource Email}"
+                       Text="{Binding Email}">
                     <Entry.FontImageSource>
                         <FontImageSource Glyph="&#xe158;" />
                     </Entry.FontImageSource>
                 </Entry>
-                <Entry Style="{DynamicResource entryIcon}" Placeholder="{DynamicResource Password}" IsPassword="True">
+                <Entry Style="{DynamicResource entryIcon}"
+                       Placeholder="{DynamicResource Password}"
+                       IsPassword="True"
+                       Text="{Binding Password}">
                     <Entry.FontImageSource>
                         <FontImageSource Glyph="&#xe897;" />
                     </Entry.FontImageSource>
                 </Entry>
-                <Button Text="{DynamicResource Login}" Style="{DynamicResource primaryButton}" />
+                <Button Text="{DynamicResource Login}"
+                        Style="{DynamicResource primaryButton}"
+                        Command="{Binding LoginCommand}" />
             </Frame>
             <Button Text="{DynamicResource Register}" Style="{DynamicResource linkButton}" Command="{Binding NavigateRegisterCommand}" />
         </VerticalStackLayout>
