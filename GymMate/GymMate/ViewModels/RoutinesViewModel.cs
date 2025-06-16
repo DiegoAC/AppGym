@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using GymMate.Models;
 using GymMate.Messages;
 using GymMate.Services;
+using System.Collections.ObjectModel;
 
 namespace GymMate.ViewModels;
 
@@ -12,7 +13,7 @@ public partial class RoutinesViewModel : ObservableObject
     private readonly IRealtimeDbService _db;
     private readonly IFirebaseAuthService _auth;
 
-    public ObservableCollection<WorkoutRoutine> Routines { get; } = new();
+    public ObservableCollection<RoutineCardVm> Routines { get; } = new();
 
     public RoutinesViewModel(IRealtimeDbService db, IFirebaseAuthService auth)
     {
@@ -44,53 +45,57 @@ public partial class RoutinesViewModel : ObservableObject
         {
             Routines.Clear();
             foreach (var r in routines.OrderByDescending(x => x.CreatedUtc))
-                Routines.Add(r);
+                Routines.Add(ToVm(r));
         });
     }
 
+    private RoutineCardVm ToVm(WorkoutRoutine r)
+        => new(r.Name, r.Focus, r.Difficulty, r.CreatedUtc, r);
+
     private void LocalAddOrUpdate(WorkoutRoutine routine)
     {
-        var existing = Routines.FirstOrDefault(r => r.Id == routine.Id);
+        var existing = Routines.FirstOrDefault(r => r.CommandParameter.Id == routine.Id);
+        var vm = ToVm(routine);
         if (existing == null)
         {
-            Routines.Add(routine);
+            Routines.Add(vm);
         }
         else
         {
             var index = Routines.IndexOf(existing);
-            Routines[index] = routine;
+            Routines[index] = vm;
         }
     }
 
     private void LocalDelete(string id)
     {
-        var existing = Routines.FirstOrDefault(r => r.Id == id);
+        var existing = Routines.FirstOrDefault(r => r.CommandParameter.Id == id);
         if (existing != null)
             Routines.Remove(existing);
     }
 
     [RelayCommand]
-    private async Task AddAsync()
+    private async Task AddRoutineAsync()
     {
         await Shell.Current.GoToAsync("routineDetail");
     }
 
     [RelayCommand]
-    private async Task EditAsync(WorkoutRoutine routine)
+    private async Task EditRoutineAsync(RoutineCardVm card)
     {
-        await Shell.Current.GoToAsync("routineDetail", new Dictionary<string, object> { ["Routine"] = routine });
+        await Shell.Current.GoToAsync("routineDetail", new Dictionary<string, object> { ["Routine"] = card.CommandParameter });
     }
 
     [RelayCommand]
-    private async Task DeleteAsync(WorkoutRoutine routine)
+    private async Task DeleteAsync(RoutineCardVm card)
     {
-        bool confirm = await Shell.Current.DisplayAlert("Eliminar", $"¿Eliminar {routine.Name}?", "Sí", "No");
+        bool confirm = await Shell.Current.DisplayAlert("Eliminar", $"¿Eliminar {card.CommandParameter.Name}?", "Sí", "No");
         if (!confirm) return;
 
-        LocalDelete(routine.Id);
+        LocalDelete(card.CommandParameter.Id);
         try
         {
-            await _db.DeleteRoutineAsync(_auth.CurrentUserUid, routine.Id);
+            await _db.DeleteRoutineAsync(_auth.CurrentUserUid, card.CommandParameter.Id);
         }
         catch
         {

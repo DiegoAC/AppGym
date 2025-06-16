@@ -49,4 +49,5 @@
     <sys:String x:Key="Tagline">Work out smarter</sys:String>
     <sys:String x:Key="Back">Back</sys:String>
     <sys:String x:Key="ConfirmPassword">Confirm password</sys:String>
+    <sys:String x:Key="NoRoutines">You have no routines yet</sys:String>
 </ResourceDictionary>
