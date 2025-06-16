@@ -2,47 +2,42 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:GymMate.ViewModels"
-             xmlns:models="clr-namespace:GymMate.Models"
-             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=Maui.FFImageLoading"
              x:Class="GymMate.Views.FeedPage"
              x:DataType="vm:FeedViewModel"
              x:Name="page">
-    <Grid>
-        <CollectionView ItemsSource="{Binding Posts}"
-                        RemainingItemsThreshold="5"
-                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
-                        IsPullToRefreshEnabled="True"
-                        IsRefreshing="{Binding IsRefreshing}"
-                        RefreshCommand="{Binding RefreshCommand}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:FeedPost">
-                    <VerticalStackLayout Padding="10" Spacing="5">
-                    <HorizontalStackLayout Spacing="10">
-                        <Image Source="{Binding AuthorAvatarUrl}" WidthRequest="32" HeightRequest="32">
-                            <Image.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenProfileCommand}" CommandParameter="{Binding AuthorUid}" />
-                            </Image.GestureRecognizers>
-                        </Image>
-                        <Label Text="{Binding AuthorName}" VerticalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenProfileCommand}" CommandParameter="{Binding AuthorUid}" />
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </HorizontalStackLayout>
-                    <ff:CachedImage Source="{Binding PhotoUrl}" Aspect="AspectFill" HeightRequest="300" />
-                    <Label Text="{Binding Caption}" />
-                    <HorizontalStackLayout>
-                        <Label Text="{Binding LikesCount}" />
-                        <Button Text="❤️" Command="{Binding Source={x:Reference page}, Path=BindingContext.ToggleLikeCommand}" CommandParameter="{Binding .}" />
-                        <Button Text="{DynamicResource Comments}" Command="{Binding Source={x:Reference page}, Path=BindingContext.OpenCommentsCommand}" CommandParameter="{Binding Id}" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
+    <CollectionView x:Name="PostsCollection"
+                    ItemsSource="{Binding Posts}"
+                    RemainingItemsThreshold="5"
+                    RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
+                    IsPullToRefreshEnabled="True"
+                    IsRefreshing="{Binding IsRefreshing}"
+                    RefreshCommand="{Binding RefreshCommand}"
+                    VerticalScrollBarVisibility="Never">
+        <CollectionView.Header>
+            <Grid Padding="16,0" BackgroundColor="{DynamicResource BackgroundColor}">
+                <Label Text="{DynamicResource Feed}" Style="{DynamicResource h1}" />
+            </Grid>
+        </CollectionView.Header>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="vm:FeedPostVm">
+                <Frame CornerRadius="12" Margin="16,8" HasShadow="False" BackgroundColor="{DynamicResource CardColor}">
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Padding="8,4">
+                            <Image Source="{Binding AuthorAvatarUrl}" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" ClipToBounds="True" CornerRadius="20" />
+                            <Label Text="{Binding AuthorName}" VerticalOptions="Center" Margin="8,0" Style="{DynamicResource subtitle}" />
+                        </HorizontalStackLayout>
+                        <Image Source="{Binding PhotoUrl}" Aspect="AspectFill" HeightRequest="250" CornerRadius="8" />
+                        <VerticalStackLayout Padding="8,4" Spacing="4">
+                            <Label Text="{Binding Caption}" Style="{DynamicResource body}" />
+                            <HorizontalStackLayout Spacing="24">
+                                <Button Text="&#xe87d;" FontFamily="MaterialIcons" FontSize="24" Command="{Binding LikeCommand}" />
+                                <Button Text="&#xe0b7;" FontFamily="MaterialIcons" FontSize="24" Command="{Binding CommentCommand}" />
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding LikesCount, StringFormat='{0} likes'}" Style="{DynamicResource caption}" Opacity="0.7" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
             </DataTemplate>
         </CollectionView.ItemTemplate>
-        </CollectionView>
-        <Label Text="{Binding EmptyMessage}"
-               IsVisible="{Binding IsEmpty}"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
-    </Grid>
+    </CollectionView>
 </ContentPage>

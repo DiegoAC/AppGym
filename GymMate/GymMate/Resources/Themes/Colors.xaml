@@ -9,6 +9,7 @@
         <Color x:Key="AccentColor">#FFFFC107</Color>
         <Color x:Key="AccentGradientStart">#FF4CAF50</Color>
         <Color x:Key="AccentGradientEnd">#FFFFC107</Color>
+        <Color x:Key="CardColor">#F2FFFFFF</Color>
     </ResourceDictionary>
     <ResourceDictionary x:Class="GymMate.Resources.Themes.DarkColors">
         <Color x:Key="PrimaryColor">#FF4CAF50</Color>
@@ -18,5 +19,6 @@
         <Color x:Key="AccentColor">#FFFFC107</Color>
         <Color x:Key="AccentGradientStart">#FF4CAF50</Color>
         <Color x:Key="AccentGradientEnd">#FFFFC107</Color>
+        <Color x:Key="CardColor">#F2000000</Color>
     </ResourceDictionary>
 </ResourceDictionary>
