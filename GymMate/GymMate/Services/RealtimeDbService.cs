@@ -1,5 +1,8 @@
 namespace GymMate.Services;
 
+using Plugin.Firebase.Firestore;
+using System.Reactive.Linq;
+
 public interface IRealtimeDbService
 {
     Task SaveUserProfileAsync(string userId, object profile);
@@ -16,96 +19,111 @@ public interface IRealtimeDbService
 
 public class RealtimeDbService : IRealtimeDbService
 {
-    private static readonly Dictionary<string, Dictionary<string, Models.WorkoutRoutine>> _routines = new();
-    private static readonly Dictionary<string, Dictionary<string, Models.WorkoutSession>> _sessions = new();
-    private static readonly Dictionary<string, HashSet<string>> _tokens = new();
+    private readonly IFirebaseFirestore _firestore;
+    private readonly Dictionary<string, IDisposable> _routineSubs = new();
+    private readonly Dictionary<string, IDisposable> _sessionSubs = new();
 
     public event EventHandler? RoutinesChanged;
     public event EventHandler? SessionsChanged;
 
-    public Task SaveUserProfileAsync(string userId, object profile)
+    public RealtimeDbService(IFirebaseFirestore firestore)
     {
-        // TODO: Integrate Firebase realtime database
-        return Task.CompletedTask;
+        _firestore = firestore;
     }
 
-    public Task<IEnumerable<Models.WorkoutRoutine>> GetRoutinesAsync(string userId)
-    {
-        if (_routines.TryGetValue(userId, out var dict))
-        {
-            return Task.FromResult<IEnumerable<Models.WorkoutRoutine>>(dict.Values.ToList());
-        }
+    private CollectionReference RoutineCollection(string uid)
+        => _firestore.Collection($"userProfiles/{uid}/routines");
 
-        return Task.FromResult<IEnumerable<Models.WorkoutRoutine>>(Array.Empty<Models.WorkoutRoutine>());
+    private CollectionReference SessionCollection(string uid)
+        => _firestore.Collection($"userProfiles/{uid}/sessions");
+
+    private void EnsureRoutineListener(string uid)
+    {
+        if (_routineSubs.ContainsKey(uid))
+            return;
+        _routineSubs[uid] = RoutineCollection(uid)
+            .AsObservable()
+            .Subscribe(_ => RoutinesChanged?.Invoke(this, EventArgs.Empty));
+    }
+
+    private void EnsureSessionListener(string uid)
+    {
+        if (_sessionSubs.ContainsKey(uid))
+            return;
+        _sessionSubs[uid] = SessionCollection(uid)
+            .AsObservable()
+            .Subscribe(_ => SessionsChanged?.Invoke(this, EventArgs.Empty));
+    }
+
+    public Task SaveUserProfileAsync(string userId, object profile)
+    {
+        return _firestore.Collection("userProfiles")
+            .Document(userId)
+            .SetAsync(profile);
+    }
+
+    public async Task<IEnumerable<Models.WorkoutRoutine>> GetRoutinesAsync(string userId)
+    {
+        EnsureRoutineListener(userId);
+        var snapshot = await RoutineCollection(userId).GetAsync();
+        var list = new List<Models.WorkoutRoutine>();
+        foreach (var doc in snapshot.Documents)
+        {
+            var routine = doc.ToObject<Models.WorkoutRoutine>();
+            if (routine != null)
+            {
+                routine.Id = doc.Id;
+                list.Add(routine);
+            }
+        }
+        return list;
     }
 
     public Task AddOrUpdateRoutineAsync(string userId, Models.WorkoutRoutine routine)
     {
-        if (!_routines.TryGetValue(userId, out var dict))
-        {
-            dict = new();
-            _routines[userId] = dict;
-        }
-
-        dict[routine.Id] = routine;
-        RoutinesChanged?.Invoke(this, EventArgs.Empty);
-        return Task.CompletedTask;
+        EnsureRoutineListener(userId);
+        return RoutineCollection(userId).Document(routine.Id).SetAsync(routine);
     }
 
     public Task DeleteRoutineAsync(string userId, string routineId)
     {
-        if (_routines.TryGetValue(userId, out var dict))
-        {
-            dict.Remove(routineId);
-        }
-
-        RoutinesChanged?.Invoke(this, EventArgs.Empty);
-        return Task.CompletedTask;
+        EnsureRoutineListener(userId);
+        return RoutineCollection(userId).Document(routineId).DeleteAsync();
     }
 
-    public Task<IEnumerable<Models.WorkoutSession>> GetSessionsAsync(string userId)
+    public async Task<IEnumerable<Models.WorkoutSession>> GetSessionsAsync(string userId)
     {
-        if (_sessions.TryGetValue(userId, out var dict))
+        EnsureSessionListener(userId);
+        var snapshot = await SessionCollection(userId).GetAsync();
+        var list = new List<Models.WorkoutSession>();
+        foreach (var doc in snapshot.Documents)
         {
-            return Task.FromResult<IEnumerable<Models.WorkoutSession>>(dict.Values.ToList());
+            var session = doc.ToObject<Models.WorkoutSession>();
+            if (session != null)
+            {
+                session.Id = doc.Id;
+                list.Add(session);
+            }
         }
-
-        return Task.FromResult<IEnumerable<Models.WorkoutSession>>(Array.Empty<Models.WorkoutSession>());
+        return list;
     }
 
     public Task AddSessionAsync(string userId, Models.WorkoutSession session)
     {
-        if (!_sessions.TryGetValue(userId, out var dict))
-        {
-            dict = new();
-            _sessions[userId] = dict;
-        }
-
-        dict[session.Id] = session;
-        SessionsChanged?.Invoke(this, EventArgs.Empty);
-        return Task.CompletedTask;
+        EnsureSessionListener(userId);
+        return SessionCollection(userId).Document(session.Id).SetAsync(session);
     }
 
     public Task DeleteSessionAsync(string userId, string sessionId)
     {
-        if (_sessions.TryGetValue(userId, out var dict))
-        {
-            dict.Remove(sessionId);
-        }
-
-        SessionsChanged?.Invoke(this, EventArgs.Empty);
-        return Task.CompletedTask;
+        EnsureSessionListener(userId);
+        return SessionCollection(userId).Document(sessionId).DeleteAsync();
     }
 
     public Task SaveDeviceTokenAsync(string userId, string token)
     {
-        if (!_tokens.TryGetValue(userId, out var set))
-        {
-            set = new();
-            _tokens[userId] = set;
-        }
-
-        set.Add(token);
-        return Task.CompletedTask;
+        return _firestore.Collection($"userProfiles/{userId}/deviceTokens")
+            .Document(token)
+            .SetAsync(new { token });
     }
 }

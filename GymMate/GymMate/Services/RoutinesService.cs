@@ -3,7 +3,6 @@ namespace GymMate.Services;
 using GymMate.Models;
 using GymMate.Data;
 using Microsoft.Maui.Networking;
-using Plugin.Firebase.Firestore;
 
 public interface IRoutinesService
 {
@@ -16,40 +15,40 @@ public interface IRoutinesService
 
 public class RoutinesService : IRoutinesService
 {
-    private readonly IFirebaseFirestore _firestore;
     private readonly LocalDbService _localDb;
     private readonly IAnalyticsService _analytics;
+    private readonly IRealtimeDbService _db;
+    private string? _currentUid;
 
     public event EventHandler? RoutinesChanged;
 
-    public RoutinesService(IFirebaseFirestore firestore, LocalDbService localDb, IAnalyticsService analytics)
+    public RoutinesService(LocalDbService localDb, IAnalyticsService analytics, IRealtimeDbService db)
     {
-        _firestore = firestore;
         _localDb = localDb;
         _analytics = analytics;
+        _db = db;
+        _db.RoutinesChanged += async (_, _) =>
+        {
+            if (!string.IsNullOrEmpty(_currentUid))
+            {
+                var routines = await _db.GetRoutinesAsync(_currentUid);
+                foreach (var r in routines)
+                    await _localDb.SaveRoutineAsync(r);
+                RoutinesChanged?.Invoke(this, EventArgs.Empty);
+            }
+        };
     }
-
-    private CollectionReference GetCollection(string uid)
-        => _firestore.Collection($"userProfiles/{uid}/routines");
 
     public async Task<IEnumerable<WorkoutRoutine>> GetRoutinesAsync(string uid)
     {
         if (!Connectivity.Current.IsConnected)
             return await _localDb.GetCachedRoutinesAsync();
 
-        var snapshot = await GetCollection(uid).GetAsync();
-        var list = new List<WorkoutRoutine>();
-        foreach (var doc in snapshot.Documents)
-        {
-            var routine = doc.ToObject<WorkoutRoutine>();
-            if (routine != null)
-            {
-                routine.Id = doc.Id;
-                list.Add(routine);
-                await _localDb.SaveRoutineAsync(routine);
-            }
-        }
-        return list;
+        _currentUid = uid;
+        var snapshot = await _db.GetRoutinesAsync(uid);
+        foreach (var r in snapshot)
+            await _localDb.SaveRoutineAsync(r);
+        return snapshot;
     }
 
     public async Task AddOrUpdateRoutineAsync(string uid, WorkoutRoutine routine)
@@ -62,7 +61,7 @@ public class RoutinesService : IRoutinesService
             return;
         }
 
-        await GetCollection(uid).Document(routine.Id).SetAsync(routine);
+        await _db.AddOrUpdateRoutineAsync(uid, routine);
         await _localDb.SaveRoutineAsync(routine);
         await _analytics.LogEventAsync("routine_created");
         RoutinesChanged?.Invoke(this, EventArgs.Empty);
@@ -77,7 +76,7 @@ public class RoutinesService : IRoutinesService
             return;
         }
 
-        await GetCollection(uid).Document(routineId).DeleteAsync();
+        await _db.DeleteRoutineAsync(uid, routineId);
         await _localDb.DeleteRoutineAsync(routineId);
         RoutinesChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -97,7 +96,7 @@ public class RoutinesService : IRoutinesService
                 Description = dto.Description,
                 CreatedUtc = new DateTime(dto.CreatedUtc, DateTimeKind.Utc)
             };
-            await GetCollection(uid).Document(routine.Id).SetAsync(routine);
+            await _db.AddOrUpdateRoutineAsync(uid, routine);
             await _localDb.SaveRoutineAsync(routine);
         }
     }
