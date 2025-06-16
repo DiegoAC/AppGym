@@ -16,6 +16,18 @@
         <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
+    <Style x:Key="subtitle" TargetType="Label">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+    </Style>
+    <Style x:Key="body" TargetType="Label">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+    </Style>
+    <Style x:Key="caption" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+    </Style>
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
         <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
