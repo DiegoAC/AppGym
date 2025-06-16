@@ -63,7 +63,7 @@
 
         private async void OnSettingsClicked(object? sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("settings");
+            await Shell.Current.GoToAsync("//settings");
         }
     }
 }

@@ -8,6 +8,12 @@ public partial class SettingsPage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm;
-        vm.Load();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is SettingsViewModel vm)
+            vm.AppearingCommand.Execute(null);
     }
 }
